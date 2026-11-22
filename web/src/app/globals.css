@@ -1,54 +1,152 @@
 @import "tailwindcss";
 
+/* ───────────────────────────── Design «Herbarium» ─────────────────────────────
+   Ein botanisches Feldbuch mit Haltung: Papier, Tinte, Waldgrün und ein frecher Limetten-Akzent.
+   Die Farbnamen stammen aus der Vorlage (Veganrocks): «plum» = Waldgrün (dunkle Flächen),
+   «sun» = Limette (nur auf Dunkel oder als Fläche mit dunkler Schrift), «accent» = Moos (Text & Knöpfe).
+   Alle Text-Farben erreichen mind. 4.5:1 Kontrast auf ihrem Hintergrund (WCAG AA). */
 @theme {
-  /* Farben der bisherigen Seite: dunkles Olivgrün (#3d4933), Salbei (#9ea499), Sand (#ddd0b2) auf warmem Weiss.
-     Die Namen stammen aus der Vorlage (Veganrocks) – «plum» ist hier das dunkle Olivgrün, «blush» das helle Salbei.
-     Text- und Akzentfarben erreichen mind. 4.5:1 Kontrast auf Creme und Weiss (WCAG AA). */
-  --color-cream: #f8f6f0;
-  --color-blush: #eceee4;
-  --color-line: #dcdfd0;
-  --color-ink: #1e2418;
-  --color-muted: #4f5746;
-  --color-accent: #4b6a2b;
-  --color-accent-dark: #36501d;
-  --color-plum: #3d4933;
-  --color-plum-light: #56634a;
+  --color-cream: #f1ecdf; /* Papier */
+  --color-blush: #e7e0cc; /* dunkleres Papier */
+  --color-line: #cfc6ae;
+  --color-ink: #16201a;
+  --color-muted: #4b5244;
+  --color-accent: #34501f; /* Moos */
+  --color-accent-dark: #22370f;
+  --color-plum: #1b2a1f; /* Waldgrün */
+  --color-plum-light: #2c3f2f;
   --color-leaf: #6e7766;
-  --color-sun: #ddd0b2;
-  --color-sand: #e9e1cd;
+  --color-sun: #d4ee6f; /* Limette */
+  --color-sand: #e7e0cc;
+  --color-rust: #a8481f;
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
+  --font-mono: var(--font-code);
 }
 
 body {
-  background: var(--color-cream);
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  /* Papierstruktur: feines Rauschen, kaum sichtbar */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .25  0 0 0 0 .15  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+::selection {
+  background: var(--color-sun);
   color: var(--color-ink);
 }
 
-/* Anker-Links nicht unter die fixierte Kopfzeile scrollen */
 [id] {
   scroll-margin-top: 6rem;
 }
 
-/* Grosse Titel: Zeilen gleichmässig umbrechen */
 h1,
 h2 {
   text-wrap: balance;
 }
 
-/* Knöpfe und Überzeile – eigene Hilfsklassen (Tailwind 4: @utility statt @layer components) */
+/* Titel: Fraunces mit weichen, leicht verrückten Formen; Kursiv = Akzent */
+.font-display {
+  font-variation-settings: "SOFT" 50, "WONK" 1;
+  letter-spacing: -0.02em;
+}
+.font-display em,
+.display-italic {
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+}
+
 @utility btn {
   @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2;
 }
 @utility btn-primary {
-  @apply btn bg-accent text-white hover:bg-accent-dark focus-visible:outline-accent;
+  @apply btn bg-plum text-sun hover:bg-accent-dark hover:text-white focus-visible:outline-plum;
 }
 @utility btn-light {
-  @apply btn bg-white text-plum hover:bg-blush focus-visible:outline-white;
+  @apply btn bg-sun text-ink hover:bg-white focus-visible:outline-sun;
 }
 @utility btn-outline {
-  @apply btn border-2 border-current text-accent hover:border-accent hover:bg-accent hover:text-white;
+  @apply btn border border-current text-ink hover:bg-ink hover:text-cream;
 }
+/* Etikett wie auf einem Herbarbogen */
 @utility eyebrow {
-  @apply text-sm font-semibold uppercase tracking-[0.14em] text-accent;
+  @apply font-mono text-xs font-medium uppercase tracking-[0.18em] text-accent;
+}
+@utility label-tag {
+  @apply inline-flex items-center gap-2 border border-current px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.16em];
+}
+
+/* Bogenform für Fotos (wie ein Gewächshausfenster) */
+@utility arch {
+  border-radius: 999px 999px 1.5rem 1.5rem;
+}
+
+/* Eintrittskarte mit Perforation zwischen Bild- und Textteil */
+.ticket-perforation {
+  background-image: radial-gradient(circle at 50% 50%, var(--color-cream) 6px, transparent 6.5px);
+  background-size: 18px 18px;
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+/* Laufband */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 2.5rem;
+  }
+}
+@keyframes sway {
+  0%,
+  100% {
+    rotate: -2deg;
+  }
+  50% {
+    rotate: 2deg;
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .marquee-track {
+    animation: marquee 38s linear infinite;
+  }
+  .spin-slow {
+    animation: spin-slow 28s linear infinite;
+  }
+  .sway {
+    animation: sway 7s ease-in-out infinite;
+    transform-origin: 50% 100%;
+  }
+  .hero-word {
+    animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .hero-word:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+  .hero-word:nth-child(3) {
+    animation-delay: 0.24s;
+  }
+  /* Beim Scrollen auftauchen */
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
 }

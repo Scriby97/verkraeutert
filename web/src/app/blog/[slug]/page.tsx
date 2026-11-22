@@ -65,14 +65,14 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
           </Link>
         </nav>
         <header className="flex flex-col gap-4">
-          <h1 className="font-display text-4xl font-semibold leading-tight sm:text-5xl">{post.title}</h1>
+          <h1 className="font-display text-5xl leading-[0.95] sm:text-7xl">{post.title}</h1>
           <p className="text-muted">
             {post.author && <>von {post.author} · </>}
             <time dateTime={post.publishedAt}>{formatPostDate(post.publishedAt)}</time> · {readingMinutes(post.body)} Min. Lesezeit
           </p>
         </header>
         {post.coverImage && (
-          <div className="relative aspect-[16/10] overflow-hidden rounded-3xl bg-blush">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-[2rem] border border-ink bg-blush">
             <SanityImage image={post.coverImage} alt={post.title} sizes="(min-width: 768px) 768px, 100vw" priority crop={{ width: 1536, height: 960 }} />
           </div>
         )}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MaintenanceGate } from "@/components/MaintenanceGate";
@@ -12,9 +12,11 @@ import "./globals.css";
 // TODO nach dem Einrichten in Cloudflare eintragen. In den Tests (E2E=1) immer aus.
 const analyticsToken = process.env.E2E === "1" ? "" : "";
 
-// Fraunces: Serifenschrift mit organischem Charakter für Titel, Inter für Fliesstext
-const heading = Fraunces({ variable: "--font-heading", subsets: ["latin"], weight: ["500", "600", "700"] });
-const body = Inter({ variable: "--font-body", subsets: ["latin"] });
+// Design «Herbarium»: Fraunces (variabel, mit den Achsen SOFT und WONK für verspielte Kursive) für Titel,
+// Manrope für Fliesstext, JetBrains Mono für die Etiketten wie auf Herbarbögen
+const heading = Fraunces({ variable: "--font-heading", subsets: ["latin"], style: ["normal", "italic"], axes: ["SOFT", "WONK", "opsz"] });
+const body = Manrope({ variable: "--font-body", subsets: ["latin"] });
+const mono = JetBrains_Mono({ variable: "--font-code", subsets: ["latin"], weight: ["400", "500"] });
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -55,7 +57,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   );
 
   return (
-    <html lang="de-CH" className={`${heading.variable} ${body.variable} h-full antialiased`}>
+    <html lang="de-CH" className={`${heading.variable} ${body.variable} ${mono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
         {/* Wartungsmodus aus dem Studio. Google wird bewusst nicht ausgesperrt: die Inhalte stehen weiter im HTML. */}
         {settings.maintenance ? (

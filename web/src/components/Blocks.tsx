@@ -5,7 +5,19 @@ import { SanityImage } from "./SanityImage";
 
 type Fact = { _key: string; value: string; label?: string | null };
 
-/** Grosses Titelbild mit dunklem Verlauf, Überzeile, Titel und Einleitung */
+/** Titel mit Kursiv-Akzent: das letzte Wort steht kursiv («Entdecke die Welt der *Wildkräuter*») */
+export function AccentTitle({ text }: { text: string }) {
+  const words = text.trim().split(/\s+/);
+  if (words.length < 2) return <em>{text}</em>;
+  const last = words.pop();
+  return (
+    <>
+      {words.join(" ")} <em>{last}</em>
+    </>
+  );
+}
+
+/** Seitenkopf: riesiger Titel links, Bild im Bogen rechts */
 export function PageHero({
   image,
   eyebrow,
@@ -20,39 +32,36 @@ export function PageHero({
   children?: ReactNode;
 }) {
   return (
-    <section className="relative isolate overflow-hidden bg-plum text-white">
-      {image && (
-        <div className="absolute inset-0 -z-10">
-          <SanityImage image={image} alt="" decorative sizes="100vw" priority crop={{ width: 2000, height: 900 }} />
-          <div className="absolute inset-0 bg-gradient-to-r from-plum via-plum/80 to-plum/20" aria-hidden />
-        </div>
-      )}
-      <div className="mx-auto flex min-h-[22rem] max-w-7xl flex-col justify-end gap-4 px-4 pb-24 pt-24 sm:px-6 sm:pb-28 md:min-h-[30rem]">
-        {eyebrow && <p className="text-sm font-semibold uppercase tracking-[0.14em] text-sun">{eyebrow}</p>}
-        <h1 className="max-w-3xl font-display text-4xl font-semibold leading-[1.05] sm:text-6xl">{title}</h1>
-        {intro && <p className="max-w-2xl text-lg text-white/85 sm:text-xl">{intro}</p>}
+    <section className="mx-auto grid max-w-7xl items-end gap-10 px-4 pb-14 pt-10 sm:px-6 sm:pt-16 lg:grid-cols-[1.4fr_1fr]">
+      <div className="flex flex-col gap-6">
+        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+        <h1 className="font-display text-6xl leading-[0.92] sm:text-8xl">
+          <AccentTitle text={title} />
+        </h1>
+        {intro && <p className="max-w-2xl text-lg text-muted sm:text-xl">{intro}</p>}
         {children}
       </div>
+      {image && (
+        <div className="relative hidden aspect-[4/5] overflow-hidden arch bg-blush lg:block">
+          <SanityImage image={image} alt="" decorative sizes="35vw" priority crop={{ width: 900, height: 1125 }} />
+        </div>
+      )}
     </section>
   );
 }
 
-/** Leiste mit grossen Werten, z. B. «5–25 / Teilnehmende» */
+/** Eckdaten als Etiketten-Reihe */
 export function Facts({ facts, tone = "light" }: { facts?: Fact[] | null; tone?: "light" | "dark" }) {
   if (!facts?.length) return null;
+  const dark = tone === "dark";
   return (
-    <dl
-      className={`grid gap-px overflow-hidden rounded-3xl ${tone === "dark" ? "bg-white/15" : "bg-line"} ${
-        facts.length >= 4 ? "grid-cols-2 lg:grid-cols-4" : facts.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"
-      }`}
-    >
-      {facts.map((fact) => (
-        <div key={fact._key} className={`flex flex-col gap-1 p-5 sm:p-6 ${tone === "dark" ? "bg-plum-light/60" : "bg-white"}`}>
+    <dl className={`grid border-t ${dark ? "border-white/25" : "border-ink/20"} ${facts.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+      {facts.map((fact, i) => (
+        <div key={fact._key} className={`flex flex-col gap-1 py-5 sm:px-6 sm:first:pl-0 ${i > 0 ? `sm:border-l ${dark ? "sm:border-white/25" : "sm:border-ink/20"}` : ""}`}>
           <dt className="sr-only">{fact.label}</dt>
-          <dd className={`font-display text-3xl font-semibold sm:text-4xl ${tone === "dark" ? "text-white" : "text-accent"}`}>
-            {fact.value}
-          </dd>
-          {fact.label && <dd className={tone === "dark" ? "text-white/75" : "text-muted"}>{fact.label}</dd>}
+          <dd className={`font-mono text-[11px] uppercase tracking-[0.18em] ${dark ? "text-sun" : "text-accent"}`}>Nr. {String(i + 1).padStart(2, "0")}</dd>
+          <dd className={`font-display text-2xl italic leading-tight hyphens-auto sm:text-3xl ${dark ? "text-white" : "text-ink"}`}>{fact.value}</dd>
+          {fact.label && <dd className={dark ? "text-white/80" : "text-muted"}>{fact.label}</dd>}
         </div>
       ))}
     </dl>
@@ -61,15 +70,56 @@ export function Facts({ facts, tone = "light" }: { facts?: Fact[] | null; tone?:
 
 export function SectionHeading({ eyebrow, title, children }: { eyebrow?: string | null; title: string; children?: ReactNode }) {
   return (
-    <div className="flex max-w-3xl flex-col gap-3">
+    <div className="flex max-w-3xl flex-col gap-4">
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-      <h2 className="font-display text-3xl font-semibold leading-tight sm:text-5xl">{title}</h2>
+      <h2 className="font-display text-4xl leading-[0.95] sm:text-6xl">
+        <AccentTitle text={title} />
+      </h2>
       {children && <div className="text-lg text-muted">{children}</div>}
     </div>
   );
 }
 
-/** Farbiger Aufruf am Ende einer Seite */
+/** Laufband mit Kräuternamen */
+export function Marquee({ items, tone = "dark" }: { items: string[]; tone?: "dark" | "lime" }) {
+  const row = items.flatMap((item) => [item, "✺"]);
+  return (
+    <div
+      className={`overflow-hidden border-y py-4 ${tone === "dark" ? "border-plum bg-plum text-sun" : "border-ink bg-sun text-ink"}`}
+      aria-hidden
+    >
+      <div className="marquee-track">
+        {[0, 1].map((copy) => (
+          <span key={copy} className="flex shrink-0 items-center gap-8 pr-8 font-display text-3xl italic sm:text-5xl">
+            {row.map((word, i) => (
+              <span key={`${copy}-${i}`}>{word}</span>
+            ))}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Kreistext wie im Logo, dreht sich langsam */
+export function RotatingBadge({ text, className = "relative" }: { text: string; className?: string }) {
+  // className bestimmt die Position (Standard: im Fluss); «absolute …» legt den Kreis über ein Bild
+  return (
+    <div className={`flex size-36 items-center justify-center rounded-full bg-sun text-ink shadow-lg ${className}`} aria-hidden>
+      <svg viewBox="0 0 200 200" className="spin-slow absolute inset-0 size-full">
+        <defs>
+          <path id="badge-circle" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" />
+        </defs>
+        <text className="fill-current font-mono text-[15px] uppercase tracking-[0.32em]">
+          <textPath href="#badge-circle">{text}</textPath>
+        </text>
+      </svg>
+      <span className="font-display text-4xl italic">✺</span>
+    </div>
+  );
+}
+
+/** Aufruf am Ende einer Seite: Waldgrün, riesige Kursivschrift, Limetten-Knopf */
 export function CtaBand({
   title,
   text,
@@ -85,21 +135,31 @@ export function CtaBand({
 }) {
   const whatsapp = settings.whatsapp ? `https://wa.me/${settings.whatsapp}` : null;
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <div className="relative overflow-hidden rounded-[2rem] bg-accent px-6 py-12 text-white sm:px-12 sm:py-16">
-        <div className="absolute -right-16 -top-16 size-64 rounded-full bg-white/10" aria-hidden />
-        <div className="absolute -bottom-24 right-24 size-48 rounded-full bg-plum/30" aria-hidden />
-        <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="flex max-w-2xl flex-col gap-3">
-            <h2 className="font-display text-3xl font-semibold sm:text-5xl">{title || settings.ctaTitle || "Lust auf Wildkräuter?"}</h2>
-            {(text || settings.ctaText) && <p className="text-lg text-white/90">{text || settings.ctaText}</p>}
+    <section className="px-3 py-16 sm:px-5">
+      <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] bg-plum px-6 py-14 text-white sm:px-14 sm:py-20">
+        <svg viewBox="0 0 200 200" className="sway pointer-events-none absolute -bottom-10 -right-6 h-72 w-72 text-sun/25 sm:h-96 sm:w-96" aria-hidden>
+          <path
+            d="M100 200 C100 140 96 90 102 30 M102 60 C80 50 60 30 58 8 C82 18 98 38 102 60 M101 95 C125 80 150 70 172 72 C160 95 130 104 101 95 M100 130 C76 120 50 118 28 126 C46 144 78 146 100 130"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={3}
+            strokeLinecap="round"
+          />
+        </svg>
+        <div className="relative flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div className="flex max-w-3xl flex-col gap-4">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-sun">Gesucht. Gefunden. Verkräutert.</p>
+            <h2 className="font-display text-5xl leading-[0.95] sm:text-7xl">
+              <AccentTitle text={title || settings.ctaTitle || "Lust auf Wildkräuter?"} />
+            </h2>
+            {(text || settings.ctaText) && <p className="max-w-xl text-lg text-white/85">{text || settings.ctaText}</p>}
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href={href || "/kurse"} className="btn-light">
-              {label || "Kurs buchen"}
+            <Link href={href || "/kurse"} className="btn-light px-8 py-4 text-lg">
+              {label || "Kurs buchen"} <span aria-hidden>↗</span>
             </Link>
             {whatsapp && (
-              <a href={whatsapp} target="_blank" rel="noreferrer" className="btn border-2 border-white/70 text-white hover:bg-white/10">
+              <a href={whatsapp} target="_blank" rel="noreferrer" className="btn border border-white/70 text-white hover:bg-white/10">
                 WhatsApp
               </a>
             )}
@@ -112,42 +172,42 @@ export function CtaBand({
 
 type Testimonial = { _key: string; quote: string; name: string; context?: string | null };
 
+/** Stimmen: grosse Zitate, abwechselnd links und rechts eingerückt */
 export function Testimonials({ items }: { items?: Testimonial[] | null }) {
   if (!items?.length) return null;
   return (
-    <section className="bg-blush">
-      <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-20">
-        <SectionHeading eyebrow="Das sagen Gäste" title="Ein Erlebnis für alle Sinne" />
-        <ul className="grid gap-5 md:grid-cols-3">
-          {items.map((t) => (
-            <li key={t._key} className="flex flex-col gap-5 rounded-3xl bg-white p-7 shadow-sm">
-              <svg viewBox="0 0 32 24" className="h-6 w-8 text-accent" aria-hidden>
-                <path
-                  fill="currentColor"
-                  d="M0 24V14C0 6.3 4.2 1.6 12.5 0l1.2 3.2C9.2 4.6 7 7.3 6.8 11H13v13H0zm19 0V14c0-7.7 4.2-12.4 12.5-14l1.2 3.2C28.2 4.6 26 7.3 25.8 11H32v13H19z"
-                />
-              </svg>
-              <blockquote className="flex-1 text-lg leading-relaxed">{t.quote}</blockquote>
-              <p className="font-semibold">
-                {t.name}
-                {t.context && <span className="font-normal text-muted"> · {t.context}</span>}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <section className="mx-auto flex max-w-7xl flex-col gap-12 px-4 py-20 sm:px-6">
+      <p className="eyebrow">Stimmen aus den Kursen</p>
+      <ul className="flex flex-col gap-14">
+        {items.map((t, i) => (
+          <li key={t._key} className={`reveal flex max-w-4xl flex-col gap-4 ${i % 2 ? "self-end text-right" : ""}`}>
+            <blockquote className="font-display text-3xl leading-tight sm:text-5xl">
+              <span className="text-accent">«</span>
+              {t.quote}
+              <span className="text-accent">»</span>
+            </blockquote>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted">
+              — {t.name}
+              {t.context && ` · ${t.context}`}
+            </p>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
 
-/** Bildreihe (2–3 Bilder) */
+/** Bildreihe (2–3 Bilder), leicht verdreht wie eingeklebte Fotos */
 export function ImageRow({ images }: { images?: (SanityImageType & { _key: string })[] | null }) {
   if (!images?.length) return null;
+  const tilt = ["-rotate-2", "rotate-1", "-rotate-1"];
   return (
-    <div className={`grid gap-4 ${images.length >= 3 ? "sm:grid-cols-3" : images.length === 2 ? "sm:grid-cols-2" : ""}`}>
-      {images.map((image) => (
-        <div key={image._key} className={`relative overflow-hidden rounded-3xl bg-line ${images.length === 1 ? "aspect-[16/9]" : "aspect-[4/3]"}`}>
-          <SanityImage image={image} alt="" sizes="(min-width: 640px) 33vw, 100vw" crop={{ width: 1200, height: 900 }} />
+    <div className={`grid gap-6 ${images.length >= 3 ? "sm:grid-cols-3" : images.length === 2 ? "sm:grid-cols-2" : ""}`}>
+      {images.map((image, i) => (
+        <div key={image._key} className={`bg-white p-2.5 pb-8 shadow-lg ${tilt[i % 3]}`}>
+          <div className={`relative overflow-hidden bg-line ${images.length === 1 ? "aspect-[16/9]" : "aspect-[4/3]"}`}>
+            <SanityImage image={image} alt="" sizes="(min-width: 640px) 33vw, 100vw" crop={{ width: 1200, height: 900 }} />
+          </div>
         </div>
       ))}
     </div>

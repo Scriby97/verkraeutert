@@ -55,13 +55,13 @@ export default async function ProductPage({ params }: PageProps<"/kurse/[slug]">
         / <span className="text-ink">{product.name}</span>
       </nav>
       <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
-        <div className="overflow-hidden rounded-3xl border border-line bg-white pb-4 lg:sticky lg:top-24 lg:self-start">
+        <div className="overflow-hidden rounded-[2rem] border border-ink bg-white pb-4 lg:sticky lg:top-28 lg:self-start">
           <ProductGallery images={images} sizes="(min-width: 1024px) 55vw, 100vw" />
         </div>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <p className="eyebrow">{kindLabel[product.kind] ?? product.kind}</p>
-            <h1 className="font-display text-4xl font-semibold leading-tight sm:text-5xl">{product.name}</h1>
+            <h1 className="font-display text-5xl leading-[0.95] sm:text-6xl">{product.name}</h1>
             <p>
               <span className="font-display text-3xl font-semibold">{formatPrice(product.price ?? 0)}</span>
               {product.priceNote && <span className="text-muted"> {product.priceNote}</span>}

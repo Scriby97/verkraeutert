@@ -29,7 +29,7 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
         <nav
           id="mobile-menu"
           aria-label="Menü"
-          className="absolute inset-x-0 top-full max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-b border-line bg-cream shadow-lg"
+          className="absolute inset-x-0 top-full mt-2 max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-3xl border border-ink/15 bg-cream shadow-xl"
         >
           <ul className="mx-auto flex max-w-7xl flex-col px-4 pb-6 pt-2 sm:px-6">
             {links.map((link) =>

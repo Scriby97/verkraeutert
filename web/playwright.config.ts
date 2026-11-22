@@ -16,6 +16,8 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${port}`,
     trace: "retain-on-failure",
+    // Ohne Animationen: halb eingeblendete Elemente würden die Kontrastprüfung (axe) verfälschen
+    contextOptions: { reducedMotion: "reduce" },
   },
   projects: [
     {
