@@ -5,7 +5,7 @@ import { Header } from "@/components/Header";
 import { MaintenanceGate } from "@/components/MaintenanceGate";
 import { buildNav, footerPages, isGroup } from "@/lib/nav";
 import { getPages, getProducts, getSettings, imageUrl } from "@/lib/sanity";
-import { siteUrl } from "@/lib/site";
+import { siteUrl, underConstruction } from "@/lib/site";
 import "./globals.css";
 
 // Token aus Cloudflare → Web Analytics (öffentlich, steht ohnehin im HTML). Leer = keine Statistik.
@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteName = settings.siteName ?? "Verkräutert";
   // Bild beim Teilen (WhatsApp, Facebook, …) vom Sanity-CDN: funktioniert auf jeder Adresse (auch workers.dev).
   // Ohne Bild im Studio: /og.jpg der Website
-  const shareImage = imageUrl(settings.shareImage, { width: 1200, height: 630 }) ?? "/og.jpg";
+  const shareImage = underConstruction ? "/og-kurkuma.jpg" : (imageUrl(settings.shareImage, { width: 1200, height: 630 }) ?? "/og.jpg");
   return {
     title: { default: `${siteName} – Wildkräuterkurse im Aargau`, template: `%s | ${siteName}` },
     description: settings.heroText,

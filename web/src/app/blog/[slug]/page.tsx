@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { SanityImage } from "@/components/SanityImage";
 import { categoryLabel, formatPostDate, readingMinutes } from "@/lib/blog";
 import { getPosts, getProducts, getSettings, imageUrl } from "@/lib/sanity";
+import { underConstruction } from "@/lib/site";
 import { jsonLdScript, postJsonLd } from "@/lib/structured-data";
 
 export const dynamicParams = false;
@@ -23,7 +24,8 @@ async function findPost(slug: string) {
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   const post = await findPost((await params).slug);
   if (!post) return {};
-  const image = imageUrl(post.coverImage, { width: 1200, height: 630 });
+  // Im Aufbau: überall das Bild mit Kurkuma-Stempel (eigenes openGraph ersetzt das des Layouts ganz)
+  const image = underConstruction ? "/og-kurkuma.jpg" : imageUrl(post.coverImage, { width: 1200, height: 630 });
   return {
     title: post.title,
     description: post.excerpt ?? undefined,

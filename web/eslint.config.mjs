@@ -10,6 +10,8 @@ const eslintConfig = defineConfig([
     // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
+    // Temporäre Dateien von wrangler dev
+    ".wrangler/**",
     "build/**",
     "next-env.d.ts",
     // Von `npm run typegen` (studio/) erzeugt

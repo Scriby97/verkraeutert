@@ -7,6 +7,7 @@ import { ProductGallery } from "@/components/ProductGallery";
 import { RichText } from "@/components/RichText";
 import { formatDate, formatPrice } from "@/lib/format";
 import { getProducts, getSettings, imageUrl } from "@/lib/sanity";
+import { underConstruction } from "@/lib/site";
 import { jsonLdScript, productJsonLd } from "@/lib/structured-data";
 
 export const dynamicParams = false;
@@ -22,7 +23,8 @@ async function findProduct(slug: string) {
 export async function generateMetadata({ params }: PageProps<"/kurse/[slug]">): Promise<Metadata> {
   const product = await findProduct((await params).slug);
   if (!product) return {};
-  const image = imageUrl(product.images?.[0], { width: 1200, height: 630 });
+  // Im Aufbau: überall das Bild mit Kurkuma-Stempel aus dem Layout
+  const image = underConstruction ? null : imageUrl(product.images?.[0], { width: 1200, height: 630 });
   return {
     title: product.name,
     description: product.description ?? undefined,

@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { siteUrl } from "../src/lib/site";
 import { addProduct, mockServices } from "./helpers";
 
 // Barrierefreiheit (WCAG 2.1 AA) der wichtigsten Seiten
@@ -85,7 +86,7 @@ test("RSS-Feed, Sitemap und robots.txt für Google", async ({ request }) => {
   expect(feed).toContain("<title>Knoblauchsrauke im Test</title>");
   const sitemap = await (await request.get("/sitemap.xml")).text();
   for (const path of ["/kurse/test-kurs", "/blog/sammeln-im-test", "/blog/kategorie/rezepte", "/ueber-uns"]) {
-    expect(sitemap).toContain(`https://verkraeutert.ch${path}`);
+    expect(sitemap).toContain(`${siteUrl}${path}`);
   }
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Allow: /");

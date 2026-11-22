@@ -2,8 +2,8 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {schemaTypes} from './schemaTypes'
 
-// Sanity-Projekt «Verkräutert» – Project-ID nach dem Anlegen hier und in sanity.cli.ts eintragen
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'TODO'
+// Sanity-Projekt «Verkräutert» (9jcv5tis) im Konto von Nicolas
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID || '9jcv5tis'
 const dataset = process.env.SANITY_STUDIO_DATASET || 'production'
 
 // Einstellungen gibt es genau einmal – kein "Neu erstellen"/"Löschen" dafür
