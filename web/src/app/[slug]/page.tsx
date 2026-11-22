@@ -5,11 +5,16 @@ import { RichText } from "@/components/RichText";
 import { YouTube } from "@/components/YouTube";
 import { getPages, getSettings, imageUrl, youtubeId } from "@/lib/sanity";
 
-// Inhaltsseiten aus dem Studio (Kochkurse, Team-Events, Einkaufstipps, …) – beim Build als statische Seiten erzeugt
+// Weitere Inhaltsseiten aus dem Studio (z. B. Kräuterspaziergänge) – beim Build als statische Seiten erzeugt
 export const dynamicParams = false;
 
+// Platzhalter, solange es im Studio keine weiteren Seiten gibt: der statische Export braucht mindestens eine
+// Seite. Sie zeigt die 404-Seite und steht nicht in der Sitemap.
+const EMPTY = "keine-seite";
+
 export async function generateStaticParams() {
-  return (await getPages()).map((page) => ({ slug: page.slug }));
+  const pages = await getPages();
+  return pages.length ? pages.map((page) => ({ slug: page.slug })) : [{ slug: EMPTY }];
 }
 
 async function findPage(slug: string) {
@@ -18,7 +23,7 @@ async function findPage(slug: string) {
 
 export async function generateMetadata({ params }: PageProps<"/[slug]">): Promise<Metadata> {
   const page = await findPage((await params).slug);
-  if (!page) return {};
+  if (!page) return { robots: { index: false } };
   return { title: page.title, description: page.teaser ?? page.intro ?? undefined, alternates: { canonical: `/${page.slug}` } };
 }
 

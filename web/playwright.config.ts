@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 // Automatische Tests: `npm run test:e2e`
-// Baut die Seite mit den festen Testdaten aus src/lib/e2e-fixtures.ts (nicht mit Bettinas Inhalten aus Sanity)
+// Baut die Seite mit den festen Testdaten aus src/lib/e2e-fixtures.ts (nicht mit den Inhalten aus Sanity)
 // und klickt Warenkorb, Bestellung und Anfrage durch. Web3Forms und /api/seats werden in den Tests abgefangen.
 const port = 4322;
 

@@ -51,8 +51,8 @@ export function MobileMenu({ nav }: { nav: NavItem[] }) {
               ),
             )}
             <li className="mt-5">
-              <Link href="/kontakt" onClick={() => setOpen(false)} className="btn-primary w-full">
-                Kochkurs oder Event anfragen
+              <Link href="/kurse" onClick={() => setOpen(false)} className="btn-primary w-full">
+                Kurs buchen
               </Link>
             </li>
           </ul>

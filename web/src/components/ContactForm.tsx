@@ -5,7 +5,7 @@ import { inputClass, sendForm, web3formsKey } from "@/lib/web3forms";
 
 type Status = "idle" | "sending" | "success" | "error";
 
-const occasions = ["Privater Kochkurs", "Team-Event / Firmenanlass", "Polterabend / Geburtstag", "Gastro-Coaching", "Social Cooking", "Gutschein", "Etwas anderes"];
+const occasions = ["Frage zu einem Kurs", "Kurs für eine Gruppe", "Gutschein", "Etwas anderes"];
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -35,8 +35,8 @@ export function ContactForm() {
   if (status === "success") {
     return (
       <div className="flex flex-col gap-2 rounded-3xl bg-white p-8 shadow-sm">
-        <h2 className="font-display text-3xl font-extrabold">Danke für deine Anfrage!</h2>
-        <p className="text-muted">Ich melde mich so bald wie möglich bei dir. Let’s rock the kitchen!</p>
+        <h2 className="font-display text-3xl font-semibold">Danke für deine Anfrage!</h2>
+        <p className="text-muted">Wir melden uns so bald wie möglich bei dir. Gesucht. Gefunden. Verkräutert.</p>
       </div>
     );
   }
@@ -80,13 +80,13 @@ export function ContactForm() {
       </div>
       <label className="flex flex-col gap-1 text-sm font-medium">
         Nachricht
-        <textarea name="message" required rows={5} placeholder="Erzähl mir von deinem Anlass, Ort und Wünschen …" className={inputClass} />
+        <textarea name="message" required rows={5} placeholder="Deine Frage oder dein Wunsch …" className={inputClass} />
       </label>
       <input type="checkbox" name="botcheck" className="hidden" tabIndex={-1} autoComplete="off" />
 
       {status === "error" && (
         <p className="text-sm font-semibold text-accent">
-          Die Nachricht konnte nicht gesendet werden. Bitte versuche es nochmals oder schreib mir direkt eine E-Mail.
+          Die Nachricht konnte nicht gesendet werden. Bitte versuche es nochmals oder schreib uns direkt eine E-Mail.
         </p>
       )}
       <button type="submit" disabled={status === "sending" || !web3formsKey} className="btn-primary self-start disabled:opacity-50">

@@ -1,40 +1,37 @@
 import Link from "next/link";
 import { CtaBand, Facts, SectionHeading, Testimonials } from "@/components/Blocks";
+import { PostCard } from "@/components/PostCard";
 import { ProductCard } from "@/components/ProductCard";
 import { RichText } from "@/components/RichText";
 import { SanityImage } from "@/components/SanityImage";
-import { YouTube } from "@/components/YouTube";
-import { getProducts, getSettings, imageUrl, youtubeId } from "@/lib/sanity";
+import { getPosts, getProducts, getSettings, imageUrl } from "@/lib/sanity";
+import { jsonLdScript, organizationJsonLd } from "@/lib/structured-data";
 
 export default async function HomePage() {
-  const [settings, products] = await Promise.all([getSettings(), getProducts()]);
-  // Startseite: nächste Termine, sonst die ersten Gutscheine/Kochkurse – höchstens drei Karten
+  const [settings, products, posts] = await Promise.all([getSettings(), getProducts(), getPosts()]);
+  // Nächste Kurse zuerst (getProducts sortiert nach Datum), höchstens drei Karten
   const featured = products.filter((p) => p.available).slice(0, 3);
-  const videos = (settings.videos ?? []).flatMap((v) => {
-    const id = youtubeId(v.url);
-    return id ? [{ ...v, id, thumb: imageUrl(v.thumbnail, { width: 1280, height: 720 }) }] : [];
-  });
+  const latest = posts.slice(0, 3);
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationJsonLd(settings, imageUrl(settings.logo))) }} />
       <section className="relative isolate overflow-hidden bg-plum text-white">
         <div className="absolute inset-0 -z-10">
           <SanityImage image={settings.heroImage} alt="" decorative sizes="100vw" priority crop={{ width: 2400, height: 1350 }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-plum via-plum/70 to-plum/30" aria-hidden />
+          <div className="absolute inset-0 bg-gradient-to-t from-plum via-plum/70 to-plum/25" aria-hidden />
         </div>
-        <div className="mx-auto flex min-h-[calc(100svh-4.5rem)] max-w-7xl flex-col justify-end gap-10 px-4 pb-10 pt-28 sm:px-6 sm:pb-14">
+        <div className="mx-auto flex min-h-[calc(100svh-5rem)] max-w-7xl flex-col justify-end gap-10 px-4 pb-10 pt-28 sm:px-6 sm:pb-14">
           <div className="flex max-w-3xl flex-col gap-5">
-            {settings.heroEyebrow && (
-              <p className="text-sm font-semibold uppercase tracking-[0.14em] text-sun">{settings.heroEyebrow}</p>
-            )}
-            <h1 className="font-display text-5xl font-extrabold leading-[1.02] sm:text-7xl">{settings.heroTitle ?? settings.siteName}</h1>
+            {settings.heroEyebrow && <p className="text-sm font-semibold uppercase tracking-[0.14em] text-sun">{settings.heroEyebrow}</p>}
+            <h1 className="font-display text-5xl font-semibold leading-[1.05] sm:text-7xl">{settings.heroTitle ?? settings.siteName}</h1>
             {settings.heroText && <p className="max-w-2xl text-lg text-white/85 sm:text-xl">{settings.heroText}</p>}
             <div className="flex flex-wrap gap-3 pt-2">
-              <Link href="/kontakt" className="btn-primary">
-                Kochkurs anfragen
+              <Link href="/kurse" className="btn-light">
+                Kurse entdecken
               </Link>
-              <Link href="/shop" className="btn-light">
-                Gutschein verschenken
+              <Link href="/blog" className="btn border-2 border-white/60 text-white hover:border-white hover:bg-white/10">
+                Zum Blog
               </Link>
             </div>
           </div>
@@ -42,39 +39,15 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {settings.offers && settings.offers.length > 0 && (
-        <section className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-24">
-          <SectionHeading eyebrow="Angebot" title={settings.offersTitle || "Für jeden Anlass"} />
-          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {settings.offers.map((offer) => (
-              <li key={offer._key}>
-                <Link
-                  href={`/${offer.slug}`}
-                  className="group relative flex aspect-[3/4] flex-col justify-end overflow-hidden rounded-3xl bg-plum p-6 text-white"
-                >
-                  <SanityImage image={offer.image} alt="" decorative sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" crop={{ width: 900, height: 1200 }} />
-                  <span className="absolute inset-0 bg-gradient-to-t from-plum via-plum/45 to-transparent transition group-hover:via-plum/60" aria-hidden />
-                  <span className="relative flex flex-col gap-2">
-                    <span className="font-display text-2xl font-extrabold">{offer.title}</span>
-                    {offer.text && <span className="text-white/85">{offer.text}</span>}
-                    <span className="mt-1 font-semibold text-sun">Mehr erfahren →</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
       {featured.length > 0 && (
         <section className="bg-white">
           <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-20">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-              <SectionHeading eyebrow="Shop" title="Termine & Gutscheine">
-                Ein Kochkurs ist das perfekte Geschenk – Datum, Ort und Menü sind frei wählbar.
+              <SectionHeading eyebrow="Kurse" title="Die nächsten Kurse">
+                Wildkräuter sicher bestimmen, nachhaltig sammeln und genussvoll verarbeiten – ohne Vorwissen.
               </SectionHeading>
-              <Link href="/shop" className="btn-outline shrink-0">
-                Zum Shop
+              <Link href="/kurse" className="btn-outline shrink-0">
+                Alle Kurse
               </Link>
             </div>
             <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -91,54 +64,41 @@ export default async function HomePage() {
       {settings.introTitle && (
         <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2 lg:gap-16">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-line">
-            <SanityImage image={settings.introImage} alt="Bettina Pfiffner" sizes="(min-width: 1024px) 50vw, 100vw" crop={{ width: 1200, height: 1500 }} />
-            <span className="absolute bottom-5 left-5 rounded-full bg-accent px-4 py-2 font-display font-bold text-white shadow-lg">
-              über 10 Jahre Erfahrung
-            </span>
+            <SanityImage image={settings.introImage} alt="Jenny und Bettina" sizes="(min-width: 1024px) 50vw, 100vw" crop={{ width: 1200, height: 1500 }} />
           </div>
           <div className="flex flex-col gap-6">
-            <SectionHeading eyebrow="Veganrocks" title={settings.introTitle} />
+            <SectionHeading eyebrow="Über uns" title={settings.introTitle} />
             <RichText value={settings.introText} className="text-lg text-muted" />
-            <div className="flex flex-wrap gap-3">
-              <Link href="/ueber-mich" className="btn-outline">
-                Über Bettina
-              </Link>
-              <Link href="/galerie" className="btn font-semibold text-accent hover:text-accent-dark">
-                Fotos ansehen →
+            <Link href="/ueber-uns" className="btn-outline self-start">
+              Jenny & Bettina kennenlernen
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {latest.length > 0 && (
+        <section className="bg-blush">
+          <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-20">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <SectionHeading eyebrow="Blog" title={settings.blogTitle ?? "Aus dem Blog"}>
+                {settings.blogIntro}
+              </SectionHeading>
+              <Link href="/blog" className="btn-outline shrink-0">
+                Alle Artikel
               </Link>
             </div>
+            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {latest.map((post) => (
+                <li key={post._id}>
+                  <PostCard post={post} />
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       )}
 
       <Testimonials items={settings.testimonials} />
-
-      {videos.length > 0 && (
-        <section className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-24">
-          <SectionHeading eyebrow="Videos" title="Kochen, grillieren, geniessen">
-            Für Rezeptideen und Inspiration:{" "}
-            {settings.instagram ? (
-              <a href={settings.instagram} target="_blank" rel="noreferrer" className="font-semibold text-accent underline">
-                @veganrocks.ch auf Instagram
-              </a>
-            ) : (
-              "folge Veganrocks auf Instagram"
-            )}
-            .
-          </SectionHeading>
-          <div className="grid gap-5 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <YouTube id={videos[0].id} title={videos[0].title} thumbnail={videos[0].thumb} large />
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
-              {videos.slice(1, 3).map((v) => (
-                <YouTube key={v._key} id={v.id} title={v.title} thumbnail={v.thumb} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       <CtaBand settings={settings} />
     </>
   );

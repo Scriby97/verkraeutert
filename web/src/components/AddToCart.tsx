@@ -30,7 +30,7 @@ export function AddToCart({
     return (
       <div className="flex flex-col gap-3 rounded-2xl bg-blush p-5">
         <p className="font-display text-xl font-bold">Ausgebucht</p>
-        <p className="text-muted">Dieser Termin ist leider voll. Melde dich trotzdem – vielleicht wird ein Platz frei oder es gibt einen Zusatztermin.</p>
+        <p className="text-muted">Dieser Kurs ist leider voll. Melde dich trotzdem – vielleicht wird ein Platz frei oder es gibt einen Zusatzkurs.</p>
         <Link href="/kontakt" className="btn-outline self-start">
           Auf die Warteliste
         </Link>

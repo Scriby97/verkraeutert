@@ -18,8 +18,8 @@ function sameChoice(a: Omit<CartItem, "id" | "quantity">, b: Omit<CartItem, "id"
   return a.slug === b.slug && (a.recipient ?? "") === (b.recipient ?? "") && (a.greeting ?? "") === (b.greeting ?? "");
 }
 
-const storageKey = "veganrocks-cart";
-const changeEvent = "veganrocks-cart-change";
+const storageKey = "verkraeutert-cart";
+const changeEvent = "verkraeutert-cart-change";
 const empty: CartItem[] = [];
 
 let cachedRaw: string | null = null;

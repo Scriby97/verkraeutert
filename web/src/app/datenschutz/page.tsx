@@ -11,7 +11,7 @@ export default async function PrivacyPage() {
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
-      <h1 className="mb-8 font-display text-4xl font-extrabold sm:text-5xl">Datenschutzerklärung</h1>
+      <h1 className="mb-8 font-display text-4xl font-semibold sm:text-5xl">Datenschutzerklärung</h1>
       <div className="flex flex-col gap-6 text-muted">
         {/* Immer aktuell aus den Kontaktangaben im Studio */}
         <div className="flex flex-col gap-2">

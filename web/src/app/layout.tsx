@@ -1,29 +1,30 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Inter } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MaintenanceGate } from "@/components/MaintenanceGate";
 import { buildNav, footerPages, isGroup } from "@/lib/nav";
 import { getPages, getProducts, getSettings, imageUrl } from "@/lib/sanity";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 // Token aus Cloudflare → Web Analytics (öffentlich, steht ohnehin im HTML). Leer = keine Statistik.
 // TODO nach dem Einrichten in Cloudflare eintragen. In den Tests (E2E=1) immer aus.
 const analyticsToken = process.env.E2E === "1" ? "" : "";
 
-const heading = Bricolage_Grotesque({ variable: "--font-heading", subsets: ["latin"], weight: ["600", "700", "800"] });
+// Fraunces: Serifenschrift mit organischem Charakter für Titel, Inter für Fliesstext
+const heading = Fraunces({ variable: "--font-heading", subsets: ["latin"], weight: ["500", "600", "700"] });
 const body = Inter({ variable: "--font-body", subsets: ["latin"] });
 
-const siteUrl = "https://veganrocks.ch";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
-  const siteName = settings.siteName ?? "Veganrocks";
+  const siteName = settings.siteName ?? "Verkräutert";
   // Bild beim Teilen (WhatsApp, Facebook, …) vom Sanity-CDN: funktioniert auf jeder Adresse (auch workers.dev).
   // Ohne Bild im Studio: /og.jpg der Website
   const shareImage = imageUrl(settings.shareImage, { width: 1200, height: 630 }) ?? "/og.jpg";
   return {
-    title: { default: `${siteName} – vegane Kochkurse & Events im Aargau`, template: `%s | ${siteName}` },
+    title: { default: `${siteName} – Wildkräuterkurse im Aargau`, template: `%s | ${siteName}` },
     description: settings.heroText,
     metadataBase: new URL(siteUrl),
     alternates: { canonical: "./" },
@@ -37,9 +38,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const nav = buildNav(pages);
   // Gleiche Auswahl wie der Warenkorb auf /warenkorb
   const orderableSlugs = products.filter((p) => p.available && !p.soldOut).map((p) => p.slug);
-  const siteName = settings.siteName ?? "Veganrocks";
+  const siteName = settings.siteName ?? "Verkräutert";
   const offerLinks = nav.filter(isGroup).find((g) => g.label === "Angebot")?.links ?? [];
-  const tipLinks = nav.filter(isGroup).find((g) => g.label === "Tipps & Rezepte")?.links.filter((l) => l.href !== "/galerie") ?? [];
 
   const page = (
     <>
@@ -50,7 +50,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <main id="inhalt" className="flex-1">
         {children}
       </main>
-      <Footer settings={settings} offerLinks={offerLinks} moreLinks={[...tipLinks, ...footerPages(pages)]} />
+      <Footer settings={settings} offerLinks={offerLinks} moreLinks={footerPages(pages)} />
     </>
   );
 

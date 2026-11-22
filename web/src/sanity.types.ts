@@ -22,13 +22,36 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
-export type Thumbnail = {
-  asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "media" in schema
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  _type: "image";
-};
+export type PostText = Array<
+  | {
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal" | "h3" | "h2";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }
+  | {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      caption?: string;
+      _type: "image";
+      _key: string;
+    }
+>;
 
 export type RichText = Array<{
   children?: Array<{
@@ -48,199 +71,6 @@ export type RichText = Array<{
   _type: "block";
   _key: string;
 }>;
-
-export type Product = {
-  _id: string;
-  _type: "product";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name: string;
-  slug: Slug;
-  kind: "voucher" | "course" | "event";
-  price: number;
-  priceNote?: string;
-  description?: string;
-  details?: RichText;
-  images?: Array<{
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-    _key: string;
-  }>;
-  date?: string;
-  time?: string;
-  location?: string;
-  seats?: number;
-  giftFields?: boolean;
-  available?: boolean;
-  sortOrder?: number;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x: number;
-  y: number;
-  height: number;
-  width: number;
-};
-
-export type Slug = {
-  _type: "slug";
-  current: string;
-  source?: string;
-};
-
-export type PageReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "page";
-};
-
-export type SiteSettings = {
-  _id: string;
-  _type: "siteSettings";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  maintenance?: boolean;
-  maintenanceText?: string;
-  previewPassword?: string;
-  siteName?: string;
-  logo?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  shareImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  heroEyebrow?: string;
-  heroTitle?: string;
-  heroText?: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-  };
-  heroFacts?: Array<{
-    value: string;
-    label?: string;
-    _key: string;
-  }>;
-  offersTitle?: string;
-  offers?: Array<{
-    title: string;
-    text?: string;
-    image?: {
-      asset?: SanityImageAssetReference;
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      alt?: string;
-      _type: "image";
-    };
-    page: PageReference;
-    _key: string;
-  }>;
-  introTitle?: string;
-  introText?: RichText;
-  introImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-  };
-  ctaTitle?: string;
-  ctaText?: string;
-  testimonials?: Array<{
-    quote: string;
-    name: string;
-    context?: string;
-    _key: string;
-  }>;
-  videos?: Array<{
-    title: string;
-    url: string;
-    thumbnail?: Thumbnail;
-    _key: string;
-  }>;
-  galleryTitle?: string;
-  galleryIntro?: string;
-  gallery?: Array<{
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-    _key: string;
-  }>;
-  aboutTitle?: string;
-  aboutLead?: string;
-  aboutText?: RichText;
-  aboutImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-  };
-  qualifications?: Array<string>;
-  aboutImages?: Array<{
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-    _key: string;
-  }>;
-  shopIntro?: string;
-  orderInfo?: RichText;
-  twintQr?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  ownerName?: string;
-  company?: string;
-  address?: string;
-  email?: string;
-  phone?: string;
-  whatsapp?: string;
-  instagram?: string;
-  facebook?: string;
-  newsletterUrl?: string;
-  agbText?: RichText;
-  privacyText?: RichText;
-};
 
 export type Page = {
   _id: string;
@@ -284,7 +114,13 @@ export type Page = {
   videos?: Array<{
     title: string;
     url: string;
-    thumbnail?: Thumbnail;
+    thumbnail?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
     _key: string;
   }>;
   showTestimonials?: boolean;
@@ -294,10 +130,211 @@ export type Page = {
     link?: "/kontakt" | "/shop";
     buttonLabel?: string;
   };
-  menu: "angebot" | "tipps" | "footer";
+  menu: "angebot" | "footer";
   menuTitle?: string;
   teaser?: string;
   sortOrder?: number;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+};
+
+export type Slug = {
+  _type: "slug";
+  current: string;
+  source?: string;
+};
+
+export type Product = {
+  _id: string;
+  _type: "product";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name: string;
+  slug: Slug;
+  kind: "event" | "course" | "item" | "voucher";
+  price: number;
+  priceNote?: string;
+  description?: string;
+  details?: RichText;
+  images?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+    _key: string;
+  }>;
+  date?: string;
+  time?: string;
+  schedule?: Array<string>;
+  location?: string;
+  seats?: number;
+  giftFields?: boolean;
+  available?: boolean;
+  sortOrder?: number;
+};
+
+export type ProductReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "product";
+};
+
+export type Post = {
+  _id: string;
+  _type: "post";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title: string;
+  slug: Slug;
+  excerpt: string;
+  coverImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  body?: PostText;
+  publishedAt: string;
+  author: "Bettina" | "Jenny" | "Jenny & Bettina";
+  category: "wissen" | "rezepte" | "tipps";
+  relatedCourses?: Array<
+    {
+      _key: string;
+    } & ProductReference
+  >;
+};
+
+export type SiteSettings = {
+  _id: string;
+  _type: "siteSettings";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  maintenance?: boolean;
+  maintenanceText?: string;
+  previewPassword?: string;
+  siteName?: string;
+  logo?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  shareImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroText?: string;
+  heroImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  heroFacts?: Array<{
+    value: string;
+    label?: string;
+    _key: string;
+  }>;
+  introTitle?: string;
+  introText?: RichText;
+  introImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  ctaTitle?: string;
+  ctaText?: string;
+  aboutTitle?: string;
+  aboutLead?: string;
+  aboutText?: RichText;
+  aboutImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  team?: Array<{
+    name: string;
+    text?: string;
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    };
+    _key: string;
+  }>;
+  blogTitle?: string;
+  blogIntro?: string;
+  shopIntro?: string;
+  orderInfo?: RichText;
+  twintQr?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  bankAccount?: {
+    holder?: string;
+    iban?: string;
+  };
+  shippingFee?: number;
+  testimonials?: Array<{
+    quote: string;
+    name: string;
+    context?: string;
+    _key: string;
+  }>;
+  ownerName?: string;
+  company?: string;
+  address?: string;
+  email?: string;
+  phone?: string;
+  whatsapp?: string;
+  instagram?: string;
+  tiktok?: string;
+  facebook?: string;
+  newsletterUrl?: string;
+  agbText?: RichText;
+  privacyText?: RichText;
 };
 
 export type SanityImagePaletteSwatch = {
@@ -399,15 +436,16 @@ export type Geopoint = {
 
 export type AllSanitySchemaTypes =
   | SanityImageAssetReference
-  | Thumbnail
+  | PostText
   | RichText
-  | Product
+  | Page
   | SanityImageCrop
   | SanityImageHotspot
   | Slug
-  | PageReference
+  | Product
+  | ProductReference
+  | Post
   | SiteSettings
-  | Page
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -419,7 +457,7 @@ export type AllSanitySchemaTypes =
 
 // Source: ../web/src/lib/sanity.ts
 // Variable: SETTINGS_QUERY
-// Query: *[_type == "siteSettings" && _id == "siteSettings"][0]{  ...,  // Kacheln: Adresse der verlinkten Seite statt der Referenz  "offers": offers[defined(page)]{ _key, title, text, image, "slug": page->slug.current }}
+// Query: *[_type == "siteSettings" && _id == "siteSettings"][0]
 export type SETTINGS_QUERY_RESULT = {
   _id: "siteSettings";
   _type: "siteSettings";
@@ -460,21 +498,6 @@ export type SETTINGS_QUERY_RESULT = {
     label?: string;
     _key: string;
   }>;
-  offersTitle?: string;
-  offers: Array<{
-    _key: string;
-    title: string;
-    text: string | null;
-    image: {
-      asset?: SanityImageAssetReference;
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      alt?: string;
-      _type: "image";
-    } | null;
-    slug: string;
-  }> | null;
   introTitle?: string;
   introText?: RichText;
   introImage?: {
@@ -487,29 +510,6 @@ export type SETTINGS_QUERY_RESULT = {
   };
   ctaTitle?: string;
   ctaText?: string;
-  testimonials?: Array<{
-    quote: string;
-    name: string;
-    context?: string;
-    _key: string;
-  }>;
-  videos?: Array<{
-    title: string;
-    url: string;
-    thumbnail?: Thumbnail;
-    _key: string;
-  }>;
-  galleryTitle?: string;
-  galleryIntro?: string;
-  gallery?: Array<{
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-    _key: string;
-  }>;
   aboutTitle?: string;
   aboutLead?: string;
   aboutText?: RichText;
@@ -521,16 +521,21 @@ export type SETTINGS_QUERY_RESULT = {
     alt?: string;
     _type: "image";
   };
-  qualifications?: Array<string>;
-  aboutImages?: Array<{
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
+  team?: Array<{
+    name: string;
+    text?: string;
+    image?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    };
     _key: string;
   }>;
+  blogTitle?: string;
+  blogIntro?: string;
   shopIntro?: string;
   orderInfo?: RichText;
   twintQr?: {
@@ -540,6 +545,17 @@ export type SETTINGS_QUERY_RESULT = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  bankAccount?: {
+    holder?: string;
+    iban?: string;
+  };
+  shippingFee?: number;
+  testimonials?: Array<{
+    quote: string;
+    name: string;
+    context?: string;
+    _key: string;
+  }>;
   ownerName?: string;
   company?: string;
   address?: string;
@@ -547,6 +563,7 @@ export type SETTINGS_QUERY_RESULT = {
   phone?: string;
   whatsapp?: string;
   instagram?: string;
+  tiktok?: string;
   facebook?: string;
   newsletterUrl?: string;
   agbText?: RichText;
@@ -594,7 +611,13 @@ export type PAGES_QUERY_RESULT = Array<{
   videos: Array<{
     title: string;
     url: string;
-    thumbnail?: Thumbnail;
+    thumbnail?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
     _key: string;
   }> | null;
   showTestimonials: boolean | false;
@@ -604,19 +627,19 @@ export type PAGES_QUERY_RESULT = Array<{
     link?: "/kontakt" | "/shop";
     buttonLabel?: string;
   } | null;
-  menu: "angebot" | "footer" | "tipps";
+  menu: "angebot" | "footer";
   menuTitle: string | null;
   teaser: string | null;
 }>;
 
 // Source: ../web/src/lib/sanity.ts
 // Variable: PRODUCTS_QUERY
-// Query: *[_type == "product" && defined(slug.current) && (kind != "event" || date >= $today)]  | order(sortOrder asc, name asc) {  _id, name, "slug": slug.current, "kind": coalesce(kind, "voucher"), price, priceNote, description, details,  // Leere Bildplätze (Bild hinzugefügt, aber keine Datei gewählt) weglassen  "images": images[defined(asset)],  date, time, location, seats,  "giftFields": coalesce(kind == "voucher" && coalesce(giftFields, true), false),  "soldOut": coalesce(defined(seats) && seats <= 0, false),  "available": coalesce(available, true)}
+// Query: *[_type == "product" && defined(slug.current) && (kind != "event" || date >= $today)]  | order(sortOrder asc, name asc) {  _id, name, "slug": slug.current, "kind": coalesce(kind, "event"), price, priceNote, description, details,  // Leere Bildplätze (Bild hinzugefügt, aber keine Datei gewählt) weglassen  "images": images[defined(asset)],  date, time, "schedule": coalesce(schedule, []), location, seats,  "giftFields": coalesce(kind == "voucher" && coalesce(giftFields, true), false),  "soldOut": coalesce(defined(seats) && seats <= 0, false),  "available": coalesce(available, true)}
 export type PRODUCTS_QUERY_RESULT = Array<{
   _id: string;
   name: string;
   slug: string;
-  kind: "course" | "event" | "voucher";
+  kind: "course" | "event" | "item" | "voucher";
   price: number;
   priceNote: string | null;
   description: string | null;
@@ -632,6 +655,7 @@ export type PRODUCTS_QUERY_RESULT = Array<{
   }> | null;
   date: string | null;
   time: string | null;
+  schedule: Array<string> | Array<never>;
   location: string | null;
   seats: number | null;
   giftFields: boolean | false | true;
@@ -639,12 +663,36 @@ export type PRODUCTS_QUERY_RESULT = Array<{
   available: boolean | true;
 }>;
 
+// Source: ../web/src/lib/sanity.ts
+// Variable: POSTS_QUERY
+// Query: *[_type == "post" && defined(slug.current) && defined(publishedAt)] | order(publishedAt desc) {  _id, title, "slug": slug.current, excerpt, coverImage, body, publishedAt, author, "category": coalesce(category, "wissen"),  "relatedCourses": coalesce(relatedCourses[]->slug.current, [])}
+export type POSTS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  coverImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  body: PostText | null;
+  publishedAt: string;
+  author: "Bettina" | "Jenny & Bettina" | "Jenny";
+  category: "rezepte" | "tipps" | "wissen";
+  relatedCourses: Array<string> | Array<never>;
+}>;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
-    '*[_type == "siteSettings" && _id == "siteSettings"][0]{\n  ...,\n  // Kacheln: Adresse der verlinkten Seite statt der Referenz\n  "offers": offers[defined(page)]{ _key, title, text, image, "slug": page->slug.current }\n}': SETTINGS_QUERY_RESULT;
+    '*[_type == "siteSettings" && _id == "siteSettings"][0]': SETTINGS_QUERY_RESULT;
     '*[_type == "page" && defined(slug.current)] | order(sortOrder asc, title asc) {\n  _id, title, "slug": slug.current, eyebrow, intro, heroImage, facts, body, cardsTitle, cards,\n  "images": images[defined(asset)], videos, "showTestimonials": coalesce(showTestimonials, false), cta,\n  "menu": coalesce(menu, "angebot"), menuTitle, teaser\n}': PAGES_QUERY_RESULT;
-    '*[_type == "product" && defined(slug.current) && (kind != "event" || date >= $today)]\n  | order(sortOrder asc, name asc) {\n  _id, name, "slug": slug.current, "kind": coalesce(kind, "voucher"), price, priceNote, description, details,\n  // Leere Bildpl\xE4tze (Bild hinzugef\xFCgt, aber keine Datei gew\xE4hlt) weglassen\n  "images": images[defined(asset)],\n  date, time, location, seats,\n  "giftFields": coalesce(kind == "voucher" && coalesce(giftFields, true), false),\n  "soldOut": coalesce(defined(seats) && seats <= 0, false),\n  "available": coalesce(available, true)\n}': PRODUCTS_QUERY_RESULT;
+    '*[_type == "product" && defined(slug.current) && (kind != "event" || date >= $today)]\n  | order(sortOrder asc, name asc) {\n  _id, name, "slug": slug.current, "kind": coalesce(kind, "event"), price, priceNote, description, details,\n  // Leere Bildpl\xE4tze (Bild hinzugef\xFCgt, aber keine Datei gew\xE4hlt) weglassen\n  "images": images[defined(asset)],\n  date, time, "schedule": coalesce(schedule, []), location, seats,\n  "giftFields": coalesce(kind == "voucher" && coalesce(giftFields, true), false),\n  "soldOut": coalesce(defined(seats) && seats <= 0, false),\n  "available": coalesce(available, true)\n}': PRODUCTS_QUERY_RESULT;
+    '*[_type == "post" && defined(slug.current) && defined(publishedAt)] | order(publishedAt desc) {\n  _id, title, "slug": slug.current, excerpt, coverImage, body, publishedAt, author, "category": coalesce(category, "wissen"),\n  "relatedCourses": coalesce(relatedCourses[]->slug.current, [])\n}': POSTS_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

@@ -12,7 +12,7 @@ export default async function TermsPage() {
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
-      <h1 className="mb-8 font-display text-4xl font-extrabold sm:text-5xl">Allgemeine Geschäftsbedingungen</h1>
+      <h1 className="mb-8 font-display text-4xl font-semibold sm:text-5xl">Allgemeine Geschäftsbedingungen</h1>
       <RichText value={settings.agbText} className="text-muted" />
     </section>
   );

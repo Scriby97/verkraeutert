@@ -3,7 +3,7 @@
 import { useState, useSyncExternalStore, type FormEvent } from "react";
 import { inputClass } from "@/lib/web3forms";
 
-const storageKey = "veganrocks-preview";
+const storageKey = "verkraeutert-preview";
 
 function readStored() {
   try {
@@ -62,7 +62,7 @@ export function MaintenanceGate({
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-plum px-4 text-white">
         <div className="flex max-w-md flex-col items-center gap-6 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-sun">Kurz in Wartung</p>
-          <h1 className="font-display text-6xl font-extrabold sm:text-7xl">{siteName}</h1>
+          <h1 className="font-display text-6xl font-semibold sm:text-7xl">{siteName}</h1>
           <p className="whitespace-pre-line text-xl text-white/80">{text}</p>
           {password && (
             <form onSubmit={handleSubmit} className="flex w-full flex-col gap-2">

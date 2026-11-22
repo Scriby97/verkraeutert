@@ -23,9 +23,9 @@ export function Header({
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-x-6 px-4 py-2.5 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label={`${siteName} – zur Startseite`}>
           {logoSrc ? (
-            <Image src={logoSrc} alt="" width={200} height={117} className="h-14 w-auto sm:h-16" priority />
+            <Image src={logoSrc} alt="" width={120} height={120} className="h-14 w-auto sm:h-16" priority />
           ) : (
-            <span className="font-display text-2xl font-extrabold uppercase text-accent">{siteName}</span>
+            <span className="font-display text-2xl font-semibold text-accent">{siteName}</span>
           )}
         </Link>
 
@@ -66,8 +66,8 @@ export function Header({
 
         <div className="flex items-center gap-2 sm:gap-3">
           <CartButton orderableSlugs={orderableSlugs} />
-          <Link href="/kontakt" className="btn-primary hidden px-5 py-2.5 text-sm sm:inline-flex">
-            Anfragen
+          <Link href="/kurse" className="btn-primary hidden px-5 py-2.5 text-sm sm:inline-flex">
+            Kurs buchen
           </Link>
           <MobileMenu nav={nav} />
         </div>

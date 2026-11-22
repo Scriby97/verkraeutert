@@ -11,7 +11,7 @@ const pixel = Buffer.from(
 
 /**
  * Fängt alles ab, was die Seite nach aussen schickt: Formulare (Web3Forms), Platzabzug (/api/seats)
- * und Bilder. Die Tests prüfen dann, was tatsächlich an Bettina gegangen wäre.
+ * und Bilder. Die Tests prüfen dann, was tatsächlich an Verkräutert gegangen wäre.
  */
 export async function mockServices(page: Page, { formsFail = false } = {}) {
   const forms: Form[] = [];
@@ -34,7 +34,7 @@ export async function mockServices(page: Page, { formsFail = false } = {}) {
 export const cartCount = (page: Page) => page.getByRole("link", { name: /^Warenkorb \(\d+\)$/ }).first();
 
 export async function addProduct(page: Page, slug: string, { quantity, recipient, greeting }: { quantity?: number; recipient?: string; greeting?: string } = {}) {
-  await page.goto(`/shop/${slug}`);
+  await page.goto(`/kurse/${slug}`);
   const form = page.locator("form#auswahl");
   if (quantity) await form.getByRole("combobox").selectOption(String(quantity));
   if (recipient) await form.getByLabel(/Für wen/).fill(recipient);

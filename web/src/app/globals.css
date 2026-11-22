@@ -1,19 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  /* Farben aus dem Logo (Magenta/Aubergine), dazu ein Blattgrün und warmes Creme.
+  /* Farben der bisherigen Seite: dunkles Olivgrün (#3d4933), Salbei (#9ea499), Sand (#ddd0b2) auf warmem Weiss.
+     Die Namen stammen aus der Vorlage (Veganrocks) – «plum» ist hier das dunkle Olivgrün, «blush» das helle Salbei.
      Text- und Akzentfarben erreichen mind. 4.5:1 Kontrast auf Creme und Weiss (WCAG AA). */
-  --color-cream: #fbf7f3;
-  --color-blush: #f8edf4;
-  --color-line: #eadde5;
-  --color-ink: #1f1424;
-  --color-muted: #5f5464;
-  --color-accent: #a4126f;
-  --color-accent-dark: #7c0d54;
-  --color-plum: #2e0f33;
-  --color-plum-light: #4a1a50;
-  --color-leaf: #4c7a2a;
-  --color-sun: #f4c35a;
+  --color-cream: #f8f6f0;
+  --color-blush: #eceee4;
+  --color-line: #dcdfd0;
+  --color-ink: #1e2418;
+  --color-muted: #4f5746;
+  --color-accent: #4b6a2b;
+  --color-accent-dark: #36501d;
+  --color-plum: #3d4933;
+  --color-plum-light: #56634a;
+  --color-leaf: #6e7766;
+  --color-sun: #ddd0b2;
+  --color-sand: #e9e1cd;
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
 }

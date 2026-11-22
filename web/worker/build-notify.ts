@@ -1,6 +1,6 @@
 // Push-Nachricht aufs Handy (ntfy), wenn ein Cloudflare-Build fehlschlägt – egal ob durch einen Push
 // auf GitHub oder durch «Publish» im Studio ausgelöst. Cloudflare legt die Build-Ereignisse in die
-// Queue «veganrocks-builds» (Event Subscription im Dashboard), dieser Worker liest sie aus.
+// Queue «verkraeutert-builds» (Event Subscription im Dashboard), dieser Worker liest sie aus.
 // Secret NTFY_TOPIC im Cloudflare-Dashboard setzen; in der ntfy-App dasselbe Topic abonnieren.
 
 export type BuildEvent = {
@@ -24,10 +24,10 @@ export type Notification = { title: string; message: string; tags: string[]; pri
 /** null = keine Nachricht (nur fehlgeschlagene Builds melden) */
 export function buildNotification(event: BuildEvent): Notification | null {
   if (!event.type.endsWith(".build.failed")) return null;
-  const worker = event.source?.workerName ?? "veganrocks";
+  const worker = event.source?.workerName ?? "verkraeutert";
   const trigger = event.payload?.buildTriggerMetadata;
   const commit = [trigger?.commitHash?.slice(0, 7), trigger?.commitMessage?.split("\n")[0]].filter(Boolean).join(" ");
-  // Push auf GitHub oder Deploy-Hook (= Bettina hat im Studio auf «Publish» geklickt)
+  // Push auf GitHub oder Deploy-Hook (= im Studio auf «Publish» geklickt)
   const cause = trigger?.buildTriggerSource === "push_event" ? `Push von ${trigger.author ?? "?"}` : "Änderung im Studio";
   const { accountId } = event.metadata ?? {};
   const buildId = event.payload?.buildUuid;

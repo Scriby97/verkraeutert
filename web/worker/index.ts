@@ -1,5 +1,5 @@
 // Cloudflare Worker: liefert die statische Seite aus `out/` aus und
-// - zählt nach einer Buchung die freien Plätze eines Termins in Sanity herunter (/api/seats).
+// - zählt nach einer Anmeldung die freien Plätze eines Kurses in Sanity herunter (/api/seats).
 //   Der Schreibschlüssel (SANITY_WRITE_TOKEN) ist ein Secret des Workers und gelangt nie in den Browser.
 // - leitet Adressen der alten Wix-Seite auf die neuen Seiten um (Google-Treffer, alte Links).
 // - meldet fehlgeschlagene Builds per ntfy (build-notify.ts).
@@ -19,38 +19,59 @@ type SeatsDoc = { _id: string; _rev: string; seats: number; slug: string };
 
 const DATASET = "production";
 
-// Alte Wix-Adressen → neue Seiten (Kleinbuchstaben, ohne Schrägstrich am Ende)
+// Alte Wix-Adressen → neue Seiten (dekodiert, Kleinbuchstaben, ohne Schrägstrich am Ende)
 const OLD_PAGES: Record<string, string> = {
-  "/home": "/kochkurse",
-  "/individuellekochkurse": "/kochkurse",
-  "/teamevent": "/team-events",
-  "/firmenevents": "/team-events",
-  "/food": "/galerie",
-  "/videos": "/rezepte",
-  "/wildkräuter": "/wildkraeuter",
-  "/wildkr%c3%a4uter": "/wildkraeuter",
-  "/info": "/ueber-mich",
-  "/medien": "/ueber-mich",
-  "/gutscheine": "/shop",
-  "/product-page/gutschein-für-einen-koch-workshop-für-1-person": "/shop/gutschein-privatevent",
-  "/product-page/kochkurs-home": "/shop/kochkurs-home",
-  "/product-page/kochevent-für-4-5-personen": "/shop/kochevent-kochstudio",
-  "/product-page/yoga": "/shop",
+  "/über-uns": "/ueber-uns",
+  "/kräuterkurse": "/kurse",
+  "/kurse-1": "/kurse",
+  "/shop": "/kurse",
+  "/blog-feed.xml": "/blog/feed.xml",
+  "/product-page/kräuterkurs": "/kurse/wildkraeuter-saisonkurs",
 };
+
+/** Wix-Adresse eines Blogartikels (/post/knoblauchsrauke-…-haustür) → neue Adresse ohne Umlaute */
+export function blogSlug(oldSlug: string) {
+  return oldSlug
+    .toLowerCase()
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** Ziel einer alten Wix-Adresse oder null */
+export function redirectTarget(pathname: string): string | null {
+  let path: string;
+  try {
+    path = decodeURIComponent(pathname).toLowerCase().replace(/\/+$/, "");
+  } catch {
+    return null;
+  }
+  if (OLD_PAGES[path]) return OLD_PAGES[path];
+  if (path.startsWith("/post/")) return `/blog/${blogSlug(path.slice("/post/".length))}`;
+  // Übrige Wix-Produktseiten, Blog-Kategorien und -Seitenzahlen
+  if (path.startsWith("/product-page/")) return "/kurse";
+  if (path.startsWith("/blog/categories/") || path.startsWith("/blog/page/") || path.startsWith("/blog/tags/")) return "/blog";
+  return null;
+}
 
 const worker = {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname === "/api/seats") return handleSeats(request, env, url);
-    const path = decodeURIComponent(url.pathname).toLowerCase().replace(/\/+$/, "");
-    const target = OLD_PAGES[path] ?? OLD_PAGES[url.pathname.toLowerCase().replace(/\/+$/, "")];
+    // www.verkraeutert.ch → verkraeutert.ch (eine einzige Adresse für Google)
+    if (url.hostname.startsWith("www.")) {
+      url.hostname = url.hostname.slice(4);
+      return Response.redirect(url.toString(), 301);
+    }
+    const target = redirectTarget(url.pathname);
     if (target) return Response.redirect(new URL(target, url).toString(), 301);
-    // Übrige Wix-Produktseiten → Shop
-    if (path.startsWith("/product-page/")) return Response.redirect(new URL("/shop", url).toString(), 301);
     return env.ASSETS.fetch(request);
   },
 
-  // Build-Ereignisse aus der Queue «veganrocks-builds»
+  // Build-Ereignisse aus der Queue «verkraeutert-builds»
   async queue(batch: QueueBatch, env: Env): Promise<void> {
     for (const message of batch.messages) {
       const event = message.body as BuildEvent;
@@ -126,7 +147,7 @@ function parseItems(body: unknown): Map<string, number> {
   return wanted;
 }
 
-// Veröffentlichte Angebote und offene Entwürfe (sonst überschreibt Bettinas nächstes «Publish» die Platzzahl)
+// Veröffentlichte Angebote und offene Entwürfe (sonst überschreibt das nächste «Publish» im Studio die Platzzahl)
 async function countedDocs(api: string, slugs: string[], env: Env): Promise<SeatsDoc[]> {
   const query = `*[_type == "product" && slug.current in $slugs && defined(seats)]{_id, _rev, seats, "slug": slug.current}`;
   const params = new URLSearchParams({ query, $slugs: JSON.stringify(slugs), perspective: "raw" });

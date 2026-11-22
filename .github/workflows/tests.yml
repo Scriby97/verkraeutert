@@ -1,5 +1,5 @@
-# Bei jedem Push: Typen, Lint und die automatischen Tests (Warenkorb, Bestellung, Anfrage, Barrierefreiheit).
-# Läuft mit festen Testdaten, nicht mit Bettinas Inhalten aus Sanity. Das Deployment bei Cloudflare ist davon unabhängig.
+# Bei jedem Push: Typen, Lint und die automatischen Tests (Anmeldung, Bezahlung, Blog, Barrierefreiheit).
+# Läuft mit festen Testdaten, nicht mit den Inhalten aus Sanity. Das Deployment bei Cloudflare ist davon unabhängig.
 name: Tests
 
 on:

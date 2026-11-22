@@ -18,20 +18,35 @@ export type OrderProduct = {
   seats?: number | null;
 };
 type Status = "idle" | "sending" | "success" | "error";
-type Payment = "invoice" | "twint";
-type Placed = { orderNo: string; total: number; payment: Payment; email: string; summary: string; hasCourses: boolean };
+type Payment = "transfer" | "twint";
+type Delivery = "pickup" | "post";
+type Placed = { orderNo: string; total: number; payment: Payment; email: string; summary: string };
+export type BankAccount = { holder?: string | null; iban?: string | null };
 
-// Kurze, gut lesbare Nummer, damit Bettina Zahlungen (TWINT, Rechnung) zuordnen kann
+// Kurze, gut lesbare Nummer, damit Zahlungen (TWINT, Überweisung) der Anmeldung zugeordnet werden können
 function newOrderNumber() {
   const d = new Date();
   const ymd = `${d.getFullYear() % 100}`.padStart(2, "0") + `${d.getMonth() + 1}`.padStart(2, "0") + `${d.getDate()}`.padStart(2, "0");
-  return `VR-${ymd}-${Math.floor(1000 + Math.random() * 9000)}`;
+  return `VK-${ymd}-${Math.floor(1000 + Math.random() * 9000)}`;
 }
 
-export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; twintQrUrl?: string | null }) {
+export function OrderForm({
+  products,
+  twintQrUrl,
+  bank,
+  shippingFee,
+}: {
+  products: OrderProduct[];
+  twintQrUrl?: string | null;
+  /** Für «Überweisung»: erscheint nach dem Absenden. Ohne IBAN folgt eine Rechnung per E-Mail. */
+  bank?: BankAccount | null;
+  /** Versandkosten für Produkte; null = nur Abholung am Kurs */
+  shippingFee?: number | null;
+}) {
   const cart = useCart();
   const [status, setStatus] = useState<Status>("idle");
-  const [payment, setPayment] = useState<Payment>("invoice");
+  const [payment, setPayment] = useState<Payment>(twintQrUrl ? "twint" : "transfer");
+  const [delivery, setDelivery] = useState<Delivery>("pickup");
   const [placed, setPlaced] = useState<Placed | null>(null);
   const removed = usePrunedCount();
 
@@ -47,9 +62,13 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
   const booked = new Map<string, number>();
   for (const l of lines) booked.set(l.slug, (booked.get(l.slug) ?? 0) + l.quantity);
   const overbooked = lines.filter((l) => typeof l.product.seats === "number" && booked.get(l.slug)! > l.product.seats);
-  const total = lines.reduce((sum, l) => sum + l.product.price * l.quantity, 0);
   const hasCourses = lines.some((l) => l.product.kind === "course");
-  const paymentMethod: Payment = twintQrUrl ? payment : "invoice";
+  const hasItems = lines.some((l) => l.product.kind === "item");
+  const canShip = hasItems && typeof shippingFee === "number";
+  const shipping = canShip && delivery === "post" ? shippingFee : 0;
+  const total = lines.reduce((sum, l) => sum + l.product.price * l.quantity, 0) + shipping;
+  const paymentMethod: Payment = twintQrUrl ? payment : "transfer";
+  const iban = bank?.iban?.trim();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -69,16 +88,20 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
           .join("");
         return `${l.quantity} × ${l.product.name} à ${formatPrice(l.product.price)}${details}`;
       })
+      .concat(hasItems ? [canShip && delivery === "post" ? `Versand per Post: ${formatPrice(shipping)}` : "Produkte: Abholung am Kurs"] : [])
       .join("\n");
     const phone = String(form.get("phone") ?? "").trim();
     const address = String(form.get("address") ?? "").trim();
     const message = String(form.get("message") ?? "").trim();
     const nextSteps = [
       paymentMethod === "twint"
-        ? `Bezahlung per TWINT: ${formatPrice(total)} an Veganrocks, wenn möglich mit der Bestellnummer als Mitteilung.`
-        : "Du erhältst in den nächsten Tagen eine Rechnung per E-Mail.",
-      lines.some((l) => l.product.kind === "voucher") && "Den Gutschein schicke ich dir nach dem Zahlungseingang per E-Mail.",
-      hasCourses && "Für den Kochkurs melde ich mich bei dir, um Datum, Gruppengrösse und Menü abzustimmen.",
+        ? `Bezahlung per TWINT: ${formatPrice(total)} an Verkräutert, wenn möglich mit der Bestellnummer als Mitteilung.`
+        : iban
+          ? `Bezahlung per Überweisung: ${formatPrice(total)} an ${bank?.holder ?? "Verkräutert"}, IBAN ${iban}, Mitteilung: ${orderNo}.`
+          : "Du erhältst in den nächsten Tagen eine Rechnung per E-Mail.",
+      lines.some((l) => l.product.kind === "voucher") && "Den Gutschein schicken wir dir nach dem Zahlungseingang per E-Mail.",
+      hasCourses && "Für den Kurs nach Absprache melden wir uns bei dir, um Datum und Ort abzustimmen.",
+      lines.some((l) => l.product.kind === "event") && "Vor dem Kurs erhältst du von uns alle Details zum Treffpunkt.",
     ]
       .filter(Boolean)
       .join(" ");
@@ -90,7 +113,7 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
       order,
       "",
       `Total: ${formatPrice(total)}`,
-      `Zahlung: ${paymentMethod === "twint" ? "TWINT" : "Rechnung per E-Mail"}`,
+      `Zahlung: ${paymentMethod === "twint" ? "TWINT" : "Überweisung"}`,
       "",
       `Name: ${form.get("name")}`,
       `E-Mail: ${form.get("email")}`,
@@ -105,11 +128,15 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
 
     try {
       await sendForm({
-        subject: `Neue Bestellung ${orderNo} von ${form.get("name")}`,
+        subject: `Neue Anmeldung/Bestellung ${orderNo} von ${form.get("name")}`,
         botcheck: form.get("botcheck"),
         Bestellnummer: orderNo,
         Zahlungsart:
-          paymentMethod === "twint" ? "TWINT – bezahlt direkt nach der Bestellung per QR-Code (Zahlungseingang prüfen)" : "Rechnung per E-Mail",
+          paymentMethod === "twint"
+            ? "TWINT – bezahlt direkt nach der Anmeldung per QR-Code (Zahlungseingang prüfen)"
+            : iban
+              ? "Überweisung mit Bestellnummer als Mitteilung (Zahlungseingang prüfen)"
+              : "Überweisung – bitte Rechnung per E-Mail schicken",
         Name: form.get("name"),
         email: form.get("email"),
         Telefon: phone || "–",
@@ -118,7 +145,7 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
         Total: formatPrice(total),
         Nachricht: message || "–",
       });
-      setPlaced({ orderNo, total, payment: paymentMethod, email: String(form.get("email")), summary, hasCourses });
+      setPlaced({ orderNo, total, payment: paymentMethod, email: String(form.get("email")), summary });
       // Freie Plätze herunterzählen (Cloudflare-Worker); scheitert das, ist die Bestellung trotzdem verschickt
       const counted = lines.filter((l) => typeof l.product.seats === "number");
       if (counted.length) {
@@ -140,7 +167,7 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
     return (
       <div className="flex flex-col gap-6 rounded-3xl bg-white p-6 shadow-sm sm:p-8">
         <div className="flex flex-col gap-2">
-          <h2 className="font-display text-3xl font-extrabold">Vielen Dank für deine Bestellung!</h2>
+          <h2 className="font-display text-3xl font-semibold">Vielen Dank für deine Anmeldung!</h2>
           <p className="text-muted">
             Bestellnummer <strong className="text-ink">{placed.orderNo}</strong>
           </p>
@@ -148,7 +175,7 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
         {placed.payment === "twint" && twintQrUrl ? (
           <div className="grid items-center gap-6 sm:grid-cols-[auto_1fr]">
             <div className="relative mx-auto aspect-square w-52">
-              <Image src={twintQrUrl} alt="TWINT-QR-Code von Veganrocks" fill sizes="208px" loading="eager" className="object-contain" />
+              <Image src={twintQrUrl} alt="TWINT-QR-Code von Verkräutert" fill sizes="208px" loading="eager" className="object-contain" />
             </div>
             <ol className="flex list-decimal flex-col gap-2 pl-5 text-muted">
               <li>TWINT-App öffnen und den QR-Code scannen.</li>
@@ -161,12 +188,28 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
               <li>Zahlung bestätigen – fertig!</li>
             </ol>
           </div>
+        ) : iban ? (
+          <div className="flex flex-col gap-2 rounded-2xl bg-blush p-5">
+            <p className="font-semibold">Bitte überweise {formatPrice(placed.total)} innert 10 Tagen auf:</p>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-muted">
+              {bank?.holder && (
+                <>
+                  <dt>Kontoinhaberin</dt>
+                  <dd className="text-ink">{bank.holder}</dd>
+                </>
+              )}
+              <dt>IBAN</dt>
+              <dd className="font-mono text-ink">{iban}</dd>
+              <dt>Mitteilung</dt>
+              <dd className="text-ink">{placed.orderNo}</dd>
+            </dl>
+          </div>
         ) : (
           <p className="text-muted">Du erhältst in den nächsten Tagen eine Rechnung per E-Mail.</p>
         )}
         <div className="flex flex-col gap-2">
-          <h3 className="font-display text-2xl font-bold">Deine Bestellung</h3>
-          <ConfirmationCopy email={placed.email} subject={`Meine Bestellung ${placed.orderNo} bei Veganrocks`} summary={placed.summary} />
+          <h3 className="font-display text-2xl font-semibold">Deine Anmeldung</h3>
+          <ConfirmationCopy email={placed.email} subject={`Meine Anmeldung ${placed.orderNo} bei Verkräutert`} summary={placed.summary} />
         </div>
       </div>
     );
@@ -177,8 +220,8 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
       <div className="flex flex-col items-start gap-4">
         {removed > 0 && <RemovedNotice count={removed} />}
         <p className="text-lg text-muted">Dein Warenkorb ist noch leer.</p>
-        <Link href="/shop" className="btn-primary">
-          Zum Shop
+        <Link href="/kurse" className="btn-primary">
+          Zu den Kursen
         </Link>
       </div>
     );
@@ -246,17 +289,22 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
           })}
         </ul>
         {removed > 0 && <RemovedNotice count={removed} />}
+        {canShip && delivery === "post" && (
+          <p className="ml-auto text-muted">
+            Versand per Post <span className="ml-3 text-ink">{formatPrice(shipping)}</span>
+          </p>
+        )}
         <p className="ml-auto flex items-baseline gap-4 text-lg">
           <span className="text-muted">Total</span>
-          <span className="font-display text-3xl font-extrabold">{formatPrice(total)}</span>
+          <span className="font-display text-3xl font-semibold">{formatPrice(total)}</span>
         </p>
-        <Link href="/shop" className="self-start text-sm font-semibold text-accent hover:text-accent-dark">
-          ← Weiter einkaufen
+        <Link href="/kurse" className="self-start text-sm font-semibold text-accent hover:text-accent-dark">
+          ← Weitere Kurse und Produkte
         </Link>
       </section>
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-3 font-display text-2xl font-bold">Deine Angaben</legend>
+        <legend className="mb-3 font-display text-2xl font-semibold">Deine Angaben</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-1 text-sm font-medium">
             Name
@@ -271,35 +319,62 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
             <input name="phone" type="tel" autoComplete="tel" className={inputClass} />
           </label>
           <label className="flex flex-col gap-1 text-sm font-medium">
-            Adresse für die Rechnung <span className="font-normal text-muted">(optional)</span>
-            <textarea name="address" rows={2} autoComplete="street-address" placeholder={"Strasse Nr.\nPLZ Ort"} className={inputClass} />
+            {delivery === "post" && canShip ? (
+              "Adresse für den Versand"
+            ) : (
+              <span>
+                Adresse <span className="font-normal text-muted">(optional)</span>
+              </span>
+            )}
+            <textarea
+              name="address"
+              rows={2}
+              required={delivery === "post" && canShip}
+              autoComplete="street-address"
+              placeholder={"Strasse Nr.\nPLZ Ort"}
+              className={inputClass}
+            />
           </label>
         </div>
         <label className="flex flex-col gap-1 text-sm font-medium">
-          Nachricht <span className="font-normal text-muted">(optional{hasCourses ? " – z. B. Wunschdatum, Anzahl Personen, Menüwünsche" : ""})</span>
+          Nachricht <span className="font-normal text-muted">(optional{hasCourses ? " – z. B. Wunschdatum oder Anzahl Personen" : ""})</span>
           <textarea name="message" rows={3} className={inputClass} />
         </label>
         {/* Spam-Schutz: für Menschen unsichtbar, Bots füllen es aus */}
         <input type="checkbox" name="botcheck" className="hidden" tabIndex={-1} autoComplete="off" />
       </fieldset>
 
-      {twintQrUrl && (
+      {canShip && (
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-3 font-display text-2xl font-bold">Bezahlung</legend>
+          <legend className="mb-3 font-display text-2xl font-semibold">Produkte erhalten</legend>
           <label className="flex items-center gap-2">
-            <input type="radio" name="payment" checked={paymentMethod === "invoice"} onChange={() => setPayment("invoice")} className="size-4 accent-accent" />
-            Rechnung per E-Mail
+            <input type="radio" name="delivery" checked={delivery === "pickup"} onChange={() => setDelivery("pickup")} className="size-4 accent-accent" />
+            Abholung am Kurs (gratis)
           </label>
           <label className="flex items-center gap-2">
-            <input type="radio" name="payment" checked={paymentMethod === "twint"} onChange={() => setPayment("twint")} className="size-4 accent-accent" />
-            TWINT – direkt nach der Bestellung bezahlen
+            <input type="radio" name="delivery" checked={delivery === "post"} onChange={() => setDelivery("post")} className="size-4 accent-accent" />
+            Versand per Post ({formatPrice(shippingFee)})
           </label>
         </fieldset>
       )}
 
+      <fieldset className="flex flex-col gap-2">
+        <legend className="mb-3 font-display text-2xl font-semibold">Bezahlung</legend>
+        {twintQrUrl && (
+          <label className="flex items-center gap-2">
+            <input type="radio" name="payment" checked={paymentMethod === "twint"} onChange={() => setPayment("twint")} className="size-4 accent-accent" />
+            TWINT – direkt nach der Anmeldung bezahlen
+          </label>
+        )}
+        <label className="flex items-center gap-2">
+          <input type="radio" name="payment" checked={paymentMethod === "transfer"} onChange={() => setPayment("transfer")} className="size-4 accent-accent" />
+          Überweisung {iban ? "(Bankangaben nach dem Absenden)" : "(Rechnung per E-Mail)"}
+        </label>
+      </fieldset>
+
       {status === "error" && (
         <p className="text-sm font-semibold text-accent">
-          Die Bestellung konnte nicht gesendet werden. Bitte versuche es nochmals oder schreib mir eine E-Mail.
+          Die Anmeldung konnte nicht gesendet werden. Bitte versuche es nochmals oder schreib uns eine E-Mail.
         </p>
       )}
 
@@ -309,12 +384,14 @@ export function OrderForm({ products, twintQrUrl }: { products: OrderProduct[]; 
           disabled={status === "sending" || !web3formsKey || overbooked.length > 0}
           className="btn-primary self-start disabled:opacity-50"
         >
-          {status === "sending" ? "Wird gesendet …" : "Verbindlich bestellen"}
+          {status === "sending" ? "Wird gesendet …" : "Verbindlich anmelden"}
         </button>
         <p className="text-xs text-muted">
           {paymentMethod === "twint"
-            ? "Nach dem Absenden zeige ich dir den TWINT-QR-Code und den Betrag."
-            : "Du bezahlst bequem per Rechnung, die du nach der Bestellung per E-Mail erhältst."}{" "}
+            ? "Nach dem Absenden zeigen wir dir den TWINT-QR-Code und den Betrag."
+            : iban
+              ? "Nach dem Absenden zeigen wir dir Betrag, IBAN und Bestellnummer für die Überweisung."
+              : "Die Rechnung für die Überweisung erhältst du nach der Anmeldung per E-Mail."}{" "}
           Es gilt die{" "}
           <Link href="/datenschutz" className="underline">
             Datenschutzerklärung

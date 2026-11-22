@@ -5,8 +5,10 @@ import { imageUrl, type SiteSettings } from "@/lib/sanity";
 
 export function Footer({ settings, offerLinks, moreLinks }: { settings: SiteSettings; offerLinks: NavLink[]; moreLinks: NavLink[] }) {
   const logoSrc = imageUrl(settings.logo);
+  const siteName = settings.siteName ?? "Verkräutert";
   const socials = [
     settings.instagram && { href: settings.instagram, label: "Instagram" },
+    settings.tiktok && { href: settings.tiktok, label: "TikTok" },
     settings.facebook && { href: settings.facebook, label: "Facebook" },
     settings.whatsapp && { href: `https://wa.me/${settings.whatsapp}`, label: "WhatsApp" },
   ].filter(Boolean) as NavLink[];
@@ -21,19 +23,19 @@ export function Footer({ settings, offerLinks, moreLinks }: { settings: SiteSett
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="flex flex-col gap-4">
           {logoSrc && (
-            <div className="w-fit rounded-2xl bg-white px-4 py-3">
-              <Image src={logoSrc} alt={settings.siteName ?? "Veganrocks"} width={160} height={65} className="h-12 w-auto" />
+            <div className="w-fit rounded-full bg-cream p-2">
+              <Image src={logoSrc} alt={siteName} width={96} height={96} className="size-24" />
             </div>
           )}
-          <p className="font-display text-2xl font-bold text-white">Let’s rock the kitchen.</p>
-          <p className="text-sm">Vegane Kochkurse, Events und Coachings in Othmarsingen, im Aargau und in der ganzen Schweiz.</p>
+          <p className="font-display text-2xl font-semibold text-white">Gesucht. Gefunden. Verkräutert.</p>
+          <p className="text-sm">Wildkräuterkurse mit Jenny und Bettina in Frick und Othmarsingen AG.</p>
         </div>
 
-        <FooterList title="Angebot" links={[...offerLinks, { href: "/shop", label: "Gutscheine verschenken" }]} />
-        <FooterList title="Mehr" links={[{ href: "/ueber-mich", label: "Über mich" }, { href: "/galerie", label: "Galerie" }, ...moreLinks]} />
+        <FooterList title="Kurse & Angebot" links={[{ href: "/kurse", label: "Kurse & Shop" }, ...offerLinks]} />
+        <FooterList title="Mehr" links={[{ href: "/blog", label: "Blog" }, { href: "/ueber-uns", label: "Über uns" }, ...moreLinks]} />
 
         <div className="flex flex-col gap-3">
-          <h2 className="font-display text-lg font-bold text-white">Kontakt</h2>
+          <h2 className="font-display text-lg font-semibold text-white">Kontakt</h2>
           {settings.ownerName && <p>{settings.ownerName}</p>}
           {settings.email && (
             <a href={`mailto:${settings.email}`} className="hover:text-white">
@@ -63,15 +65,15 @@ export function Footer({ settings, offerLinks, moreLinks }: { settings: SiteSett
           )}
           {settings.newsletterUrl && (
             <a href={settings.newsletterUrl} target="_blank" rel="noreferrer" className="mt-2 font-semibold text-sun hover:text-white">
-              Newsletter mit Rezepten & neuen Kochkursen →
+              Newsletter mit neuen Kursen & Kräutertipps →
             </a>
           )}
         </div>
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          {/* Gegründet 2014; das aktuelle Jahr kommt vom letzten Build (jede Änderung im Studio baut neu) */}
-          <p>© 2014–{new Date().getFullYear()} {settings.siteName ?? "Veganrocks"}</p>
+          {/* Seit 2021; das aktuelle Jahr kommt vom letzten Build (jede Änderung im Studio baut neu) */}
+          <p>© 2021–{new Date().getFullYear()} {siteName}</p>
           <nav aria-label="Rechtliches" className="flex gap-5">
             {legal.map((link) => (
               <Link key={link.href} href={link.href} className="hover:text-white">
@@ -88,7 +90,7 @@ export function Footer({ settings, offerLinks, moreLinks }: { settings: SiteSett
 function FooterList({ title, links }: { title: string; links: NavLink[] }) {
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="font-display text-lg font-bold text-white">{title}</h2>
+      <h2 className="font-display text-lg font-semibold text-white">{title}</h2>
       <ul className="flex flex-col gap-2">
         {links.map((link) => (
           <li key={link.href}>

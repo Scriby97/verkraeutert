@@ -29,7 +29,7 @@ export function PageHero({
       )}
       <div className="mx-auto flex min-h-[22rem] max-w-7xl flex-col justify-end gap-4 px-4 pb-24 pt-24 sm:px-6 sm:pb-28 md:min-h-[30rem]">
         {eyebrow && <p className="text-sm font-semibold uppercase tracking-[0.14em] text-sun">{eyebrow}</p>}
-        <h1 className="max-w-3xl font-display text-4xl font-extrabold leading-[1.05] sm:text-6xl">{title}</h1>
+        <h1 className="max-w-3xl font-display text-4xl font-semibold leading-[1.05] sm:text-6xl">{title}</h1>
         {intro && <p className="max-w-2xl text-lg text-white/85 sm:text-xl">{intro}</p>}
         {children}
       </div>
@@ -49,7 +49,7 @@ export function Facts({ facts, tone = "light" }: { facts?: Fact[] | null; tone?:
       {facts.map((fact) => (
         <div key={fact._key} className={`flex flex-col gap-1 p-5 sm:p-6 ${tone === "dark" ? "bg-plum-light/60" : "bg-white"}`}>
           <dt className="sr-only">{fact.label}</dt>
-          <dd className={`font-display text-3xl font-extrabold sm:text-4xl ${tone === "dark" ? "text-white" : "text-accent"}`}>
+          <dd className={`font-display text-3xl font-semibold sm:text-4xl ${tone === "dark" ? "text-white" : "text-accent"}`}>
             {fact.value}
           </dd>
           {fact.label && <dd className={tone === "dark" ? "text-white/75" : "text-muted"}>{fact.label}</dd>}
@@ -63,7 +63,7 @@ export function SectionHeading({ eyebrow, title, children }: { eyebrow?: string 
   return (
     <div className="flex max-w-3xl flex-col gap-3">
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-      <h2 className="font-display text-3xl font-extrabold leading-tight sm:text-5xl">{title}</h2>
+      <h2 className="font-display text-3xl font-semibold leading-tight sm:text-5xl">{title}</h2>
       {children && <div className="text-lg text-muted">{children}</div>}
     </div>
   );
@@ -73,8 +73,8 @@ export function SectionHeading({ eyebrow, title, children }: { eyebrow?: string 
 export function CtaBand({
   title,
   text,
-  href = "/kontakt",
-  label = "Jetzt anfragen",
+  href = "/kurse",
+  label = "Kurs buchen",
   settings,
 }: {
   title?: string | null;
@@ -91,12 +91,12 @@ export function CtaBand({
         <div className="absolute -bottom-24 right-24 size-48 rounded-full bg-plum/30" aria-hidden />
         <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="flex max-w-2xl flex-col gap-3">
-            <h2 className="font-display text-3xl font-extrabold sm:text-5xl">{title || settings.ctaTitle || "Let’s rock your kitchen!"}</h2>
+            <h2 className="font-display text-3xl font-semibold sm:text-5xl">{title || settings.ctaTitle || "Lust auf Wildkräuter?"}</h2>
             {(text || settings.ctaText) && <p className="text-lg text-white/90">{text || settings.ctaText}</p>}
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href={href || "/kontakt"} className="btn-light">
-              {label || "Jetzt anfragen"}
+            <Link href={href || "/kurse"} className="btn-light">
+              {label || "Kurs buchen"}
             </Link>
             {whatsapp && (
               <a href={whatsapp} target="_blank" rel="noreferrer" className="btn border-2 border-white/70 text-white hover:bg-white/10">

@@ -21,7 +21,7 @@ function TextLink({ href, children }: { href?: string; children: ReactNode }) {
   );
 }
 
-const components: PortableTextComponents = {
+export const richTextComponents: PortableTextComponents = {
   block: {
     // pre-line: Zeilenumbrüche innerhalb eines Absatzes bleiben sichtbar
     normal: ({ children }) => <p className="whitespace-pre-line">{children}</p>,
@@ -97,7 +97,7 @@ export function RichText({ value, className = "" }: { value?: RichTextValue | nu
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
-      <PortableText value={value} components={components} />
+      <PortableText value={value} components={richTextComponents} />
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { dateBadge, formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/sanity";
 import { SanityImage } from "./SanityImage";
 
-export const kindLabel: Record<string, string> = { voucher: "Gutschein", course: "Kochkurs", event: "Termin" };
+export const kindLabel: Record<string, string> = { event: "Kurs", course: "Kurs nach Absprache", item: "Produkt", voucher: "Gutschein" };
 
 export function seatsNote(product: Pick<Product, "seats" | "soldOut">) {
   if (product.soldOut) return "Ausgebucht";
@@ -16,7 +16,7 @@ export function ProductCard({ product }: { product: Product }) {
   const note = seatsNote(product);
   return (
     <Link
-      href={`/shop/${product.slug}`}
+      href={`/kurse/${product.slug}`}
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-white transition hover:-translate-y-1 hover:shadow-xl hover:shadow-plum/10"
     >
       <div className="relative aspect-[4/3] bg-blush">
@@ -26,7 +26,7 @@ export function ProductCard({ product }: { product: Product }) {
         </span>
         {badge && (
           <span className="absolute right-4 top-4 flex flex-col items-center rounded-2xl bg-accent px-3 py-2 leading-none text-white shadow-lg">
-            <span className="font-display text-2xl font-extrabold">{badge.day}</span>
+            <span className="font-display text-2xl font-semibold">{badge.day}</span>
             <span className="text-xs font-semibold uppercase">{badge.month}</span>
           </span>
         )}
@@ -36,7 +36,7 @@ export function ProductCard({ product }: { product: Product }) {
         {product.description && <p className="line-clamp-3 text-muted">{product.description}</p>}
         <div className="mt-auto flex items-end justify-between gap-3 pt-2">
           <p>
-            <span className="font-display text-2xl font-extrabold">{formatPrice(product.price ?? 0)}</span>
+            <span className="font-display text-2xl font-semibold">{formatPrice(product.price ?? 0)}</span>
             {product.priceNote && <span className="text-sm text-muted"> {product.priceNote}</span>}
           </p>
           {note && (

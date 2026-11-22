@@ -4,11 +4,12 @@
 import {createReadStream, existsSync} from 'node:fs'
 import path from 'node:path'
 import {getCliClient} from 'sanity/cli'
-import {placeholderPages, placeholderProducts, placeholderSettings} from '../../web/src/lib/placeholder'
+import {placeholderPages, placeholderPosts, placeholderProducts, placeholderSettings} from '../../web/src/lib/placeholder'
 import {privacyDefault} from '../../web/src/lib/privacy-default'
 
 const client = getCliClient({apiVersion: '2026-09-01'})
-const dir = path.resolve(process.cwd(), '../material/web')
+// Bilder der lokalen Vorschau (web/public/preview, aus material/bilder kopiert)
+const dir = path.resolve(process.cwd(), '../web/public/preview')
 
 let n = 0
 const key = () => `s${(n++).toString(36)}`
@@ -86,7 +87,7 @@ for (const page of placeholderPages) {
   })
 }
 
-console.log('Shop-Angebote …')
+console.log('Kurse & Shop …')
 for (const [i, product] of placeholderProducts.entries()) {
   const {_id, slug, details, soldOut: _soldOut, ...rest} = product
   tx.createIfNotExists({
@@ -99,24 +100,38 @@ for (const [i, product] of placeholderProducts.entries()) {
   })
 }
 
+console.log('Blog …')
+const productIdBySlug = new Map(placeholderProducts.map((p) => [p.slug, p._id]))
+for (const post of placeholderPosts) {
+  const {_id, slug, body, relatedCourses, ...rest} = post
+  tx.createIfNotExists({
+    _id,
+    _type: 'post',
+    ...((await withImages(rest)) as object),
+    slug: {_type: 'slug', current: slug},
+    body: blocks(body),
+    relatedCourses: relatedCourses.flatMap((s) =>
+      productIdBySlug.has(s) ? [{_type: 'reference', _key: key(), _ref: productIdBySlug.get(s)}] : [],
+    ),
+  })
+}
+
 console.log('Website-Einstellungen …')
-const pageIdBySlug = new Map(placeholderPages.map((p) => [p.slug, p._id]))
-const {offers, introText, aboutText, orderInfo, ...settings} = placeholderSettings
+const {introText, aboutText, orderInfo, ...settings} = placeholderSettings
 tx.createIfNotExists({
   _id: 'siteSettings',
   _type: 'siteSettings',
   ...((await withImages(settings)) as object),
-  offers: await withImages(
-    (offers ?? []).map(({slug, ...offer}) => ({...offer, page: {_type: 'reference', _ref: pageIdBySlug.get(slug ?? '')}})),
-  ),
   introText: blocks(introText),
   aboutText: blocks(aboutText),
   orderInfo: blocks(orderInfo),
   privacyText: blocks(privacyDefault),
-  // Erst einmal im Wartungsmodus, bis Bettina alles geprüft hat
+  // Erst einmal im Wartungsmodus, bis Jenny und Bettina alles geprüft haben
   maintenance: true,
-  previewPassword: 'rock',
+  previewPassword: 'kraut',
 })
 
 await tx.commit()
-console.log(`Fertig: ${placeholderPages.length} Seiten, ${placeholderProducts.length} Angebote, Einstellungen, ${uploaded.size} Bilder.`)
+console.log(
+  `Fertig: ${placeholderPosts.length} Blogartikel, ${placeholderProducts.length} Angebote, ${placeholderPages.length} Seiten, Einstellungen, ${uploaded.size} Bilder.`,
+)

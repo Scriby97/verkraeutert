@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
+import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-static";
 
-// Alles erlaubt; auch im Wartungsmodus bleibt die Seite für Google lesbar
+// Alles erlaubt (die alte Wix-Seite war mit «noindex» für Google gesperrt); auch im Wartungsmodus lesbar
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: { userAgent: "*", allow: "/", disallow: "/warenkorb" },
-    sitemap: "https://veganrocks.ch/sitemap.xml",
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }
