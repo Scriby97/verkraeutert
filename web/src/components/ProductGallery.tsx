@@ -79,7 +79,7 @@ export function ProductGallery({ images, sizes }: { images: GalleryImage[]; size
           <button
             type="button"
             onClick={() => dialog.current?.close()}
-            className="fixed right-4 top-4 flex size-10 items-center justify-center rounded-full bg-white/90 text-2xl text-ink hover:bg-white"
+            className="fixed right-4 top-4 flex size-10 items-center justify-center rounded-full bg-white/90 text-2xl text-plum hover:bg-white"
             aria-label="Schliessen"
           >
             ×
@@ -89,7 +89,7 @@ export function ProductGallery({ images, sizes }: { images: GalleryImage[]; size
               <button
                 type="button"
                 onClick={() => step(-1)}
-                className="fixed left-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl text-ink hover:bg-white"
+                className="fixed left-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl text-plum hover:bg-white"
                 aria-label="Vorheriges Bild"
               >
                 ‹
@@ -97,12 +97,12 @@ export function ProductGallery({ images, sizes }: { images: GalleryImage[]; size
               <button
                 type="button"
                 onClick={() => step(1)}
-                className="fixed right-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl text-ink hover:bg-white"
+                className="fixed right-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl text-plum hover:bg-white"
                 aria-label="Nächstes Bild"
               >
                 ›
               </button>
-              <p className="fixed bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 text-sm text-ink">
+              <p className="fixed bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 text-sm text-plum">
                 {active + 1} / {images.length}
               </p>
             </>

@@ -1,54 +1,230 @@
 @import "tailwindcss";
 
+/* ───────────────────────────── Design «Zauberwald» ─────────────────────────────
+   Nachts im Kräuterwald: tiefes Waldschwarz, Laternengold, Glühwürmchen-Grün.
+   Die Farbnamen stammen aus der Vorlage (Veganrocks) und sind hier umgedeutet:
+   cream = Waldboden (Seitenhintergrund), ink = Mondlicht (Text), moss/blush = Lichtungen (Flächen),
+   accent = Laternengold (Akzent, Knöpfe), sun = Glühwürmchen-Grün, plum = tiefste Nacht.
+   Alle Text-Farben erreichen mind. 4.5:1 Kontrast auf ihrem Hintergrund (WCAG AA). */
 @theme {
-  /* Farben der bisherigen Seite: dunkles Olivgrün (#3d4933), Salbei (#9ea499), Sand (#ddd0b2) auf warmem Weiss.
-     Die Namen stammen aus der Vorlage (Veganrocks) – «plum» ist hier das dunkle Olivgrün, «blush» das helle Salbei.
-     Text- und Akzentfarben erreichen mind. 4.5:1 Kontrast auf Creme und Weiss (WCAG AA). */
-  --color-cream: #f8f6f0;
-  --color-blush: #eceee4;
-  --color-line: #dcdfd0;
-  --color-ink: #1e2418;
-  --color-muted: #4f5746;
-  --color-accent: #4b6a2b;
-  --color-accent-dark: #36501d;
-  --color-plum: #3d4933;
-  --color-plum-light: #56634a;
-  --color-leaf: #6e7766;
-  --color-sun: #ddd0b2;
-  --color-sand: #e9e1cd;
+  --color-cream: #0c1610;
+  --color-moss: #132219;
+  --color-blush: #18291e;
+  --color-sand: #18291e;
+  --color-line: #2c4232;
+  --color-ink: #ede6d2;
+  --color-muted: #b6bfa8;
+  --color-accent: #e9c46a;
+  --color-accent-dark: #f6dc95;
+  --color-plum: #060d08;
+  --color-plum-light: #142118;
+  --color-leaf: #8fc26a;
+  --color-sun: #b9f56c;
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
 }
 
-body {
-  background: var(--color-cream);
-  color: var(--color-ink);
+html {
+  color-scheme: dark;
 }
 
-/* Anker-Links nicht unter die fixierte Kopfzeile scrollen */
+body {
+  color: var(--color-ink);
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(185, 245, 108, 0.08), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 100% 40%, rgba(233, 196, 106, 0.05), transparent 70%),
+    var(--color-cream);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-plum);
+}
+
 [id] {
   scroll-margin-top: 6rem;
 }
 
-/* Grosse Titel: Zeilen gleichmässig umbrechen */
 h1,
 h2 {
   text-wrap: balance;
 }
 
-/* Knöpfe und Überzeile – eigene Hilfsklassen (Tailwind 4: @utility statt @layer components) */
+.font-display {
+  letter-spacing: -0.01em;
+}
+
+/* Leuchtender Text (Titel im Wald) */
+.glow {
+  text-shadow:
+    0 0 18px rgba(233, 196, 106, 0.35),
+    0 0 42px rgba(233, 196, 106, 0.15);
+}
+.glow-green {
+  text-shadow:
+    0 0 16px rgba(185, 245, 108, 0.45),
+    0 0 40px rgba(185, 245, 108, 0.2);
+}
+
 @utility btn {
   @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2;
 }
 @utility btn-primary {
-  @apply btn bg-accent text-white hover:bg-accent-dark focus-visible:outline-accent;
+  @apply btn bg-accent text-plum shadow-[0_0_30px_-6px_rgba(233,196,106,0.7)] hover:bg-accent-dark hover:shadow-[0_0_40px_-4px_rgba(233,196,106,0.9)] focus-visible:outline-accent;
 }
 @utility btn-light {
-  @apply btn bg-white text-plum hover:bg-blush focus-visible:outline-white;
+  @apply btn bg-sun text-plum shadow-[0_0_30px_-8px_rgba(185,245,108,0.8)] hover:bg-white focus-visible:outline-sun;
 }
 @utility btn-outline {
-  @apply btn border-2 border-current text-accent hover:border-accent hover:bg-accent hover:text-white;
+  @apply btn border border-accent/70 text-accent hover:bg-accent hover:text-plum;
 }
 @utility eyebrow {
-  @apply text-sm font-semibold uppercase tracking-[0.14em] text-accent;
+  @apply text-xs font-semibold uppercase tracking-[0.3em] text-sun;
+}
+
+/* ── Bewegung ── */
+@keyframes firefly {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(var(--dx, 30px), var(--dy, -40px)) scale(1);
+  }
+  80% {
+    opacity: 1;
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 2.5rem;
+  }
+}
+@keyframes found {
+  0% {
+    scale: 1;
+  }
+  40% {
+    scale: 1.35;
+  }
+  100% {
+    scale: 1;
+  }
+}
+@keyframes bubble {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: var(--bx, 0) -140px;
+  }
+}
+@keyframes sparkle {
+  0% {
+    opacity: 0;
+    scale: 0;
+  }
+  40% {
+    opacity: 1;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 0.4;
+    translate: var(--sx, 0) var(--sy, -60px);
+  }
+}
+
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-sun);
+  box-shadow:
+    0 0 10px 3px rgba(185, 245, 108, 0.7),
+    0 0 26px 8px rgba(185, 245, 108, 0.25);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .firefly {
+    animation: firefly var(--t, 9s) ease-in-out var(--d, 0s) infinite;
+  }
+  .twinkle {
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+  .just-found {
+    animation: found 0.6s ease-out;
+  }
+  .bubble {
+    animation: bubble 2.4s ease-in var(--d, 0s) infinite;
+  }
+  .sparkle {
+    animation: sparkle 1.1s ease-out forwards;
+  }
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+
+/* Karten umdrehen (Rätselkarten) */
+.flip-card {
+  perspective: 1200px;
+}
+.flip-inner {
+  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flip-card[data-flipped="true"] .flip-inner {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .flip-inner {
+    transition: none;
+  }
 }

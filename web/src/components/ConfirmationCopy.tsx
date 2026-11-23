@@ -21,14 +21,14 @@ export function ConfirmationCopy({
       <div className="flex flex-wrap gap-2 print:hidden">
         <a
           href={mailto}
-          className="rounded-full bg-accent px-5 py-2.5 text-sm text-white hover:bg-accent-dark"
+          className="rounded-full bg-accent px-5 py-2.5 text-sm text-cream hover:bg-accent-dark"
         >
           Bestätigung an mich mailen
         </a>
         <button
           type="button"
           onClick={() => window.print()}
-          className="rounded-full border border-accent px-5 py-2.5 text-sm text-accent hover:bg-accent hover:text-white"
+          className="rounded-full border border-accent px-5 py-2.5 text-sm text-accent hover:bg-accent hover:text-cream"
         >
           Drucken / als PDF speichern
         </button>

@@ -47,7 +47,7 @@ export function Facts({ facts, tone = "light" }: { facts?: Fact[] | null; tone?:
       }`}
     >
       {facts.map((fact) => (
-        <div key={fact._key} className={`flex flex-col gap-1 p-5 sm:p-6 ${tone === "dark" ? "bg-plum-light/60" : "bg-white"}`}>
+        <div key={fact._key} className={`flex flex-col gap-1 p-5 sm:p-6 ${tone === "dark" ? "bg-plum-light/60" : "bg-moss"}`}>
           <dt className="sr-only">{fact.label}</dt>
           <dd className={`font-display text-3xl font-semibold sm:text-4xl ${tone === "dark" ? "text-white" : "text-accent"}`}>
             {fact.value}
@@ -86,16 +86,16 @@ export function CtaBand({
   const whatsapp = settings.whatsapp ? `https://wa.me/${settings.whatsapp}` : null;
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <div className="relative overflow-hidden rounded-[2rem] bg-accent px-6 py-12 text-white sm:px-12 sm:py-16">
-        <div className="absolute -right-16 -top-16 size-64 rounded-full bg-white/10" aria-hidden />
-        <div className="absolute -bottom-24 right-24 size-48 rounded-full bg-plum/30" aria-hidden />
+      <div className="relative overflow-hidden rounded-[2rem] border border-accent/50 bg-[radial-gradient(circle_at_85%_20%,#2a4a30,#0f1d14_60%)] px-6 py-12 text-ink shadow-[0_0_70px_-20px_rgba(233,196,106,0.6)] sm:px-12 sm:py-16">
+        <div className="twinkle absolute right-16 top-10 size-2 rounded-full bg-sun shadow-[0_0_14px_4px_rgba(185,245,108,0.6)]" aria-hidden />
+        <div className="twinkle absolute bottom-12 right-40 size-1.5 rounded-full bg-accent shadow-[0_0_12px_4px_rgba(233,196,106,0.6)] [animation-delay:1.2s]" aria-hidden />
         <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="flex max-w-2xl flex-col gap-3">
-            <h2 className="font-display text-3xl font-semibold sm:text-5xl">{title || settings.ctaTitle || "Lust auf Wildkräuter?"}</h2>
-            {(text || settings.ctaText) && <p className="text-lg text-white/90">{text || settings.ctaText}</p>}
+            <h2 className="glow font-display text-4xl font-semibold sm:text-6xl">{title || settings.ctaTitle || "Lust auf Wildkräuter?"}</h2>
+            {(text || settings.ctaText) && <p className="text-lg text-ink/90">{text || settings.ctaText}</p>}
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href={href || "/kurse"} className="btn-light">
+            <Link href={href || "/kurse"} className="btn-primary">
               {label || "Kurs buchen"}
             </Link>
             {whatsapp && (
@@ -120,7 +120,7 @@ export function Testimonials({ items }: { items?: Testimonial[] | null }) {
         <SectionHeading eyebrow="Das sagen Gäste" title="Ein Erlebnis für alle Sinne" />
         <ul className="grid gap-5 md:grid-cols-3">
           {items.map((t) => (
-            <li key={t._key} className="flex flex-col gap-5 rounded-3xl bg-white p-7 shadow-sm">
+            <li key={t._key} className="flex flex-col gap-5 rounded-3xl bg-moss p-7 shadow-sm">
               <svg viewBox="0 0 32 24" className="h-6 w-8 text-accent" aria-hidden>
                 <path
                   fill="currentColor"

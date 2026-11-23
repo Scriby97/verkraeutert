@@ -17,15 +17,15 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/kurse/${product.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-white transition hover:-translate-y-1 hover:shadow-xl hover:shadow-plum/10"
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-moss transition hover:-translate-y-1 hover:shadow-xl hover:shadow-plum/10"
     >
       <div className="relative aspect-[4/3] bg-blush">
         <SanityImage image={product.images?.[0]} alt="" decorative sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" crop={{ width: 900, height: 675 }} />
-        <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent">
+        <span className="absolute left-4 top-4 rounded-full bg-moss/95 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent">
           {kindLabel[product.kind] ?? product.kind}
         </span>
         {badge && (
-          <span className="absolute right-4 top-4 flex flex-col items-center rounded-2xl bg-accent px-3 py-2 leading-none text-white shadow-lg">
+          <span className="absolute right-4 top-4 flex flex-col items-center rounded-2xl bg-accent px-3 py-2 leading-none text-cream shadow-lg">
             <span className="font-display text-2xl font-semibold">{badge.day}</span>
             <span className="text-xs font-semibold uppercase">{badge.month}</span>
           </span>
@@ -40,7 +40,7 @@ export function ProductCard({ product }: { product: Product }) {
             {product.priceNote && <span className="text-sm text-muted"> {product.priceNote}</span>}
           </p>
           {note && (
-            <span className={`rounded-full px-3 py-1 text-xs font-bold ${product.soldOut ? "bg-line text-muted" : "bg-sun/40 text-ink"}`}>
+            <span className={`rounded-full px-3 py-1 text-xs font-bold ${product.soldOut ? "bg-line text-ink" : "bg-sun text-plum"}`}>
               {note}
             </span>
           )}

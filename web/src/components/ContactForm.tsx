@@ -34,7 +34,7 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="flex flex-col gap-2 rounded-3xl bg-white p-8 shadow-sm">
+      <div className="flex flex-col gap-2 rounded-3xl bg-moss p-8 shadow-sm">
         <h2 className="font-display text-3xl font-semibold">Danke für deine Anfrage!</h2>
         <p className="text-muted">Wir melden uns so bald wie möglich bei dir. Gesucht. Gefunden. Verkräutert.</p>
       </div>
@@ -42,7 +42,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm sm:p-8">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-3xl bg-moss p-6 shadow-sm sm:p-8">
       {!web3formsKey && (
         <p className="rounded-xl bg-yellow-100 p-3 text-sm text-yellow-900">
           NEXT_PUBLIC_WEB3FORMS_KEY fehlt – das Formular kann noch nicht versendet werden.

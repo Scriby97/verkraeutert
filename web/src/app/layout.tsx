@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Cormorant_Garamond, Karla } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MaintenanceGate } from "@/components/MaintenanceGate";
@@ -12,9 +12,9 @@ import "./globals.css";
 // TODO nach dem Einrichten in Cloudflare eintragen. In den Tests (E2E=1) immer aus.
 const analyticsToken = process.env.E2E === "1" ? "" : "";
 
-// Fraunces: Serifenschrift mit organischem Charakter für Titel, Inter für Fliesstext
-const heading = Fraunces({ variable: "--font-heading", subsets: ["latin"], weight: ["500", "600", "700"] });
-const body = Inter({ variable: "--font-body", subsets: ["latin"] });
+// Design «Zauberwald»: Cormorant Garamond (märchenhaft, mit eleganter Kursive) für Titel, Karla für Fliesstext
+const heading = Cormorant_Garamond({ variable: "--font-heading", subsets: ["latin"], weight: ["500", "600", "700"], style: ["normal", "italic"] });
+const body = Karla({ variable: "--font-body", subsets: ["latin"] });
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -43,7 +43,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
   const page = (
     <>
-      <a href="#inhalt" className="sr-only z-50 rounded-full bg-accent px-4 py-2 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+      <a href="#inhalt" className="sr-only z-50 rounded-full bg-accent px-4 py-2 text-cream focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
         Zum Inhalt springen
       </a>
       <Header siteName={siteName} logo={settings.logo} nav={nav} orderableSlugs={orderableSlugs} />

@@ -165,7 +165,7 @@ export function OrderForm({
 
   if (status === "success" && placed) {
     return (
-      <div className="flex flex-col gap-6 rounded-3xl bg-white p-6 shadow-sm sm:p-8">
+      <div className="flex flex-col gap-6 rounded-3xl bg-moss p-6 shadow-sm sm:p-8">
         <div className="flex flex-col gap-2">
           <h2 className="font-display text-3xl font-semibold">Vielen Dank für deine Anmeldung!</h2>
           <p className="text-muted">
@@ -240,7 +240,7 @@ export function OrderForm({
           {lines.map((l) => {
             const max = typeof l.product.seats === "number" ? l.product.seats : 99;
             return (
-              <li key={l.id} className="flex flex-col gap-3 rounded-2xl border border-line bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+              <li key={l.id} className="flex flex-col gap-3 rounded-2xl border border-line bg-moss p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
                   <p className="font-semibold">{l.product.name}</p>
                   <p className="text-sm text-muted">

@@ -30,7 +30,7 @@ export default async function AboutPage() {
       </section>
 
       {team.length > 0 && (
-        <section className="bg-white">
+        <section className="bg-moss">
           <ul className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 sm:py-20 md:grid-cols-2">
             {team.map((person) => (
               <li key={person._key} className="flex flex-col gap-5 rounded-3xl bg-blush p-6 sm:p-8">

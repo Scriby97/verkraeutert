@@ -24,7 +24,7 @@ export function Footer({ settings, offerLinks, moreLinks }: { settings: SiteSett
         <div className="flex flex-col gap-4">
           {logoSrc && (
             <div className="w-fit rounded-full bg-cream p-2">
-              <Image src={logoSrc} alt={siteName} width={96} height={96} className="size-24" />
+              <Image src={logoSrc} alt={siteName} width={96} height={96} className="size-24 brightness-0 invert" />
             </div>
           )}
           <p className="font-display text-2xl font-semibold text-white">Gesucht. Gefunden. Verkräutert.</p>

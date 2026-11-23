@@ -19,7 +19,7 @@ export function CartButton({ orderableSlugs }: { orderableSlugs: string[] }) {
         <path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2" />
       </svg>
       {count > 0 && (
-        <span className="absolute right-0.5 top-0.5 flex size-5 items-center justify-center rounded-full bg-accent text-[11px] font-bold text-white">
+        <span className="absolute right-0.5 top-0.5 flex size-5 items-center justify-center rounded-full bg-accent text-[11px] font-bold text-cream">
           {count}
         </span>
       )}

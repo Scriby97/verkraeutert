@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { CtaBand, Facts, SectionHeading, Testimonials } from "@/components/Blocks";
+import type { ReactNode } from "react";
+import { CtaBand, Testimonials } from "@/components/Blocks";
+import { Cauldron } from "@/components/magic/Cauldron";
+import { ForestQuest } from "@/components/magic/ForestQuest";
+import { RiddleCards } from "@/components/magic/RiddleCards";
 import { PostCard } from "@/components/PostCard";
 import { ProductCard } from "@/components/ProductCard";
 import { RichText } from "@/components/RichText";
@@ -7,52 +11,69 @@ import { SanityImage } from "@/components/SanityImage";
 import { getPosts, getProducts, getSettings, imageUrl } from "@/lib/sanity";
 import { jsonLdScript, organizationJsonLd } from "@/lib/structured-data";
 
+// Startseite als kleines Abenteuer in drei Kapiteln: Gesucht (Laterne im Wald), Gefunden (Rätselkarten),
+// Verkräutert (Zauberkessel) – danach die Expeditionen (Kurse), Jenny & Bettina und die Geschichten (Blog).
 export default async function HomePage() {
   const [settings, products, posts] = await Promise.all([getSettings(), getProducts(), getPosts()]);
-  // Nächste Kurse zuerst (getProducts sortiert nach Datum), höchstens drei Karten
   const featured = products.filter((p) => p.available).slice(0, 3);
   const latest = posts.slice(0, 3);
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationJsonLd(settings, imageUrl(settings.logo))) }} />
-      <section className="relative isolate overflow-hidden bg-plum text-white">
-        <div className="absolute inset-0 -z-10">
-          <SanityImage image={settings.heroImage} alt="" decorative sizes="100vw" priority crop={{ width: 2400, height: 1350 }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-plum via-plum/70 to-plum/25" aria-hidden />
+
+      <ForestQuest>
+        {settings.heroEyebrow && <p className="eyebrow">{settings.heroEyebrow}</p>}
+        <h1 id="wald-titel" className="glow font-display text-5xl font-semibold leading-[0.95] text-ink sm:text-6xl lg:text-7xl">
+          {settings.heroTitle ?? settings.siteName}
+        </h1>
+        {settings.heroText && <p className="max-w-2xl text-lg text-ink/85 sm:text-xl">{settings.heroText}</p>}
+        <div className="flex flex-wrap gap-3">
+          <Link href="/kurse" className="btn-primary">
+            Kurse entdecken
+          </Link>
+          <Link href="/blog" className="btn-outline">
+            Zum Blog
+          </Link>
         </div>
-        <div className="mx-auto flex min-h-[calc(100svh-5rem)] max-w-7xl flex-col justify-end gap-10 px-4 pb-10 pt-28 sm:px-6 sm:pb-14">
-          <div className="flex max-w-3xl flex-col gap-5">
-            {settings.heroEyebrow && <p className="text-sm font-semibold uppercase tracking-[0.14em] text-sun">{settings.heroEyebrow}</p>}
-            <h1 className="font-display text-5xl font-semibold leading-[1.05] sm:text-7xl">{settings.heroTitle ?? settings.siteName}</h1>
-            {settings.heroText && <p className="max-w-2xl text-lg text-white/85 sm:text-xl">{settings.heroText}</p>}
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Link href="/kurse" className="btn-light">
-                Kurse entdecken
-              </Link>
-              <Link href="/blog" className="btn border-2 border-white/60 text-white hover:border-white hover:bg-white/10">
-                Zum Blog
-              </Link>
-            </div>
-          </div>
-          <Facts facts={settings.heroFacts} tone="dark" />
-        </div>
-      </section>
+      </ForestQuest>
+
+      <Chapter
+        id="kapitel-2"
+        number="II"
+        word="Gefunden"
+        title="Wer bin ich? Löse die Kräuterrätsel"
+        intro="Vier Kräuter, vier Rätsel. Rate zuerst – dann dreh die Karte um und erfahre, wie du das Kraut verwendest und worauf du beim Sammeln achten musst."
+      >
+        <RiddleCards />
+      </Chapter>
+
+      <Chapter
+        id="kapitel-3"
+        number="III"
+        word="Verkräutert"
+        title="Braue deinen eigenen Kräutertrank"
+        intro="Wirf drei Kräuter in den Kessel und schau, was daraus entsteht. In der echten Küche wird daraus übrigens etwas sehr Leckeres."
+      >
+        <Cauldron />
+      </Chapter>
 
       {featured.length > 0 && (
-        <section className="bg-white">
-          <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-20">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-              <SectionHeading eyebrow="Kurse" title="Die nächsten Kurse">
-                Wildkräuter sicher bestimmen, nachhaltig sammeln und genussvoll verarbeiten – ohne Vorwissen.
-              </SectionHeading>
+        <section className="relative border-t border-line">
+          <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-20 sm:px-6 sm:py-24">
+            <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+              <div className="flex max-w-3xl flex-col gap-3">
+                <p className="eyebrow">Expeditionen</p>
+                <h2 className="glow font-display text-4xl font-semibold sm:text-6xl">Die nächsten Kurse</h2>
+                <p className="text-lg text-muted">Raus aus dem Bildschirm, rein in Wald und Wiese – mit Jenny und Bettina, ohne Vorwissen.</p>
+              </div>
               <Link href="/kurse" className="btn-outline shrink-0">
                 Alle Kurse
               </Link>
             </div>
             <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {featured.map((product) => (
-                <li key={product._id}>
+                <li key={product._id} className="reveal">
                   <ProductCard product={product} />
                 </li>
               ))}
@@ -62,34 +83,42 @@ export default async function HomePage() {
       )}
 
       {settings.introTitle && (
-        <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2 lg:gap-16">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-line">
-            <SanityImage image={settings.introImage} alt="Jenny und Bettina" sizes="(min-width: 1024px) 50vw, 100vw" crop={{ width: 1200, height: 1500 }} />
-          </div>
-          <div className="flex flex-col gap-6">
-            <SectionHeading eyebrow="Über uns" title={settings.introTitle} />
-            <RichText value={settings.introText} className="text-lg text-muted" />
-            <Link href="/ueber-uns" className="btn-outline self-start">
-              Jenny & Bettina kennenlernen
-            </Link>
+        <section className="relative overflow-hidden border-t border-line bg-plum">
+          <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-2">
+            <div className="relative mx-auto aspect-square w-full max-w-md">
+              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(233,196,106,0.35),transparent_65%)]" aria-hidden />
+              <div className="absolute inset-6 overflow-hidden rounded-full border-2 border-accent/60 shadow-[0_0_60px_-10px_rgba(233,196,106,0.7)]">
+                <SanityImage image={settings.introImage} alt="Jenny und Bettina" sizes="(min-width: 1024px) 30vw, 80vw" crop={{ width: 900, height: 900 }} />
+              </div>
+            </div>
+            <div className="flex flex-col gap-6">
+              <p className="eyebrow">Eure Wegbegleiterinnen</p>
+              <h2 className="glow font-display text-4xl font-semibold sm:text-6xl">{settings.introTitle}</h2>
+              <RichText value={settings.introText} className="text-lg text-muted" />
+              <Link href="/ueber-uns" className="btn-outline self-start">
+                Jenny & Bettina kennenlernen
+              </Link>
+            </div>
           </div>
         </section>
       )}
 
       {latest.length > 0 && (
-        <section className="bg-blush">
-          <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-16 sm:px-6 sm:py-20">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-              <SectionHeading eyebrow="Blog" title={settings.blogTitle ?? "Aus dem Blog"}>
-                {settings.blogIntro}
-              </SectionHeading>
+        <section className="border-t border-line">
+          <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-20 sm:px-6 sm:py-24">
+            <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+              <div className="flex max-w-3xl flex-col gap-3">
+                <p className="eyebrow">Geschichten aus dem Wald</p>
+                <h2 className="glow font-display text-4xl font-semibold sm:text-6xl">{settings.blogTitle ?? "Aus dem Blog"}</h2>
+                {settings.blogIntro && <p className="text-lg text-muted">{settings.blogIntro}</p>}
+              </div>
               <Link href="/blog" className="btn-outline shrink-0">
                 Alle Artikel
               </Link>
             </div>
             <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {latest.map((post) => (
-                <li key={post._id}>
+                <li key={post._id} className="reveal">
                   <PostCard post={post} />
                 </li>
               ))}
@@ -101,5 +130,42 @@ export default async function HomePage() {
       <Testimonials items={settings.testimonials} />
       <CtaBand settings={settings} />
     </>
+  );
+}
+
+/** Kapitel des Abenteuers: grosse römische Zahl, Stichwort aus dem Slogan, Titel, Einleitung, interaktiver Teil */
+function Chapter({
+  id,
+  number,
+  word,
+  title,
+  intro,
+  children,
+}: {
+  id: string;
+  number: string;
+  word: string;
+  title: string;
+  intro: string;
+  children: ReactNode;
+}) {
+  return (
+    <section id={id} className="relative border-t border-line">
+      <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-20 sm:px-6 sm:py-28">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-10">
+          <span className="glow font-display text-8xl italic leading-none text-accent sm:text-9xl" aria-hidden>
+            {number}
+          </span>
+          <div className="flex max-w-3xl flex-col gap-3">
+            <p className="eyebrow">
+              Kapitel {number} · {word}
+            </p>
+            <h2 className="font-display text-4xl font-semibold leading-tight sm:text-6xl">{title}</h2>
+            <p className="text-lg text-muted">{intro}</p>
+          </div>
+        </div>
+        {children}
+      </div>
+    </section>
   );
 }

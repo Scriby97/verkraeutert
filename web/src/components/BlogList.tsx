@@ -54,7 +54,7 @@ function CategoryLink({ href, current, children }: { href: string; current: bool
       href={href}
       aria-current={current ? "page" : undefined}
       className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
-        current ? "border-accent bg-accent text-white" : "border-line bg-white text-ink hover:border-accent hover:text-accent"
+        current ? "border-accent bg-accent text-cream" : "border-line bg-moss text-ink hover:border-accent hover:text-accent"
       }`}
     >
       {children}

@@ -12,4 +12,4 @@ export async function sendForm(fields: Record<string, FormDataEntryValue | strin
 }
 
 export const inputClass =
-  "w-full rounded-xl border border-line bg-white px-3.5 py-2.5 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20";
+  "w-full rounded-xl border border-line bg-moss px-3.5 py-2.5 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20";

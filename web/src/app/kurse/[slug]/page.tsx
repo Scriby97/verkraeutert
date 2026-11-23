@@ -55,7 +55,7 @@ export default async function ProductPage({ params }: PageProps<"/kurse/[slug]">
         / <span className="text-ink">{product.name}</span>
       </nav>
       <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
-        <div className="overflow-hidden rounded-3xl border border-line bg-white pb-4 lg:sticky lg:top-24 lg:self-start">
+        <div className="overflow-hidden rounded-3xl border border-line bg-moss pb-4 lg:sticky lg:top-24 lg:self-start">
           <ProductGallery images={images} sizes="(min-width: 1024px) 55vw, 100vw" />
         </div>
         <div className="flex flex-col gap-6">
@@ -116,7 +116,7 @@ export default async function ProductPage({ params }: PageProps<"/kurse/[slug]">
 
           <RichText value={product.details} className="border-t border-line pt-6 leading-relaxed text-muted" />
           {settings.orderInfo && (
-            <details className="rounded-2xl border border-line bg-white p-5">
+            <details className="rounded-2xl border border-line bg-moss p-5">
               <summary className="cursor-pointer font-semibold">So funktioniert die Anmeldung</summary>
               <RichText value={settings.orderInfo} className="mt-4 text-muted" />
             </details>

@@ -53,7 +53,7 @@ export default async function ContentPage({ params }: PageProps<"/[slug]">) {
             {page.cardsTitle && <SectionHeading title={page.cardsTitle} />}
             <ul className="grid gap-5 md:grid-cols-3">
               {page.cards.map((card, i) => (
-                <li key={card._key} className="flex flex-col gap-3 rounded-3xl border border-line bg-white p-7">
+                <li key={card._key} className="flex flex-col gap-3 rounded-3xl border border-line bg-moss p-7">
                   <span className="font-display text-sm font-bold text-accent">{String(i + 1).padStart(2, "0")}</span>
                   <h3 className="font-display text-2xl font-bold">{card.title}</h3>
                   {card.text && <p className="text-muted">{card.text}</p>}

@@ -80,7 +80,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
       </article>
 
       {courses.length > 0 && (
-        <section className="bg-white">
+        <section className="bg-moss">
           <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-14 sm:px-6">
             <h2 className="font-display text-3xl font-semibold sm:text-4xl">Lust, das selbst zu lernen?</h2>
             <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

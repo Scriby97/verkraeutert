@@ -104,3 +104,31 @@ test("Kontaktanfrage geht mit Anliegen an Verkräutert", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Danke für deine Anfrage!" })).toBeVisible();
   expect(forms[0]).toMatchObject({ subject: "Anfrage Kurs für eine Gruppe von Test Verein", Anlass: "Kurs für eine Gruppe" });
 });
+
+test("Abenteuer auf der Startseite: Kräuter finden, Rätsel lösen, Trank brauen", async ({ page }) => {
+  await mockServices(page);
+  await page.goto("/");
+  const forest = page.locator("#kapitel-1");
+  // Mit der Tastatur: Fokus auf ein verstecktes Kraut, Enter sammelt es ein
+  const hidden = forest.getByRole("button", { name: "Verstecktes Kraut" });
+  await expect(hidden).toHaveCount(7);
+  await hidden.first().focus();
+  await page.keyboard.press("Enter");
+  await expect(forest.getByText("Dein Kräuterkorb: 1 von 7")).toBeVisible();
+  while ((await hidden.count()) > 0) await hidden.first().click();
+  await expect(forest.getByText("Gesucht. Gefunden. Verkräutert!")).toBeVisible();
+  await expect(forest.getByRole("link", { name: "Zur nächsten Expedition" })).toHaveAttribute("href", "/kurse");
+
+  // Rätselkarte umdrehen: Name und Warnhinweis erscheinen
+  const riddles = page.locator("#kapitel-2");
+  await riddles.getByRole("button", { name: "Rätsel 1 auflösen" }).click();
+  await expect(riddles.getByRole("button", { name: "Bärlauch – Karte zurückdrehen" })).toHaveAttribute("aria-pressed", "true");
+
+  // Drei Kräuter in den Kessel: Trank mit Namen, dann ist die Auswahl voll
+  const cauldron = page.locator("#kapitel-3");
+  for (const name of ["Bärlauch", "Giersch", "Löwenzahn"]) await cauldron.getByRole("button", { name }).click();
+  await expect(cauldron.getByText("Wilder Gartengeist")).toBeVisible();
+  await expect(cauldron.getByRole("button", { name: "Brennnessel" })).toBeDisabled();
+  await cauldron.getByRole("button", { name: "Neu brauen" }).click();
+  await expect(cauldron.getByText("Der Kessel brodelt leise")).toBeVisible();
+});

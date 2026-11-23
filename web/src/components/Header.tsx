@@ -23,7 +23,7 @@ export function Header({
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-x-6 px-4 py-2.5 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label={`${siteName} – zur Startseite`}>
           {logoSrc ? (
-            <Image src={logoSrc} alt="" width={120} height={120} className="h-14 w-auto sm:h-16" priority />
+            <Image src={logoSrc} alt="" width={120} height={120} className="h-14 w-auto brightness-0 invert sm:h-16" priority />
           ) : (
             <span className="font-display text-2xl font-semibold text-accent">{siteName}</span>
           )}
@@ -45,7 +45,7 @@ export function Header({
                   </svg>
                 </button>
                 <div className="invisible absolute left-0 top-full pt-2 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
-                  <ul className="min-w-60 rounded-2xl border border-line bg-white p-2 shadow-xl shadow-plum/10">
+                  <ul className="min-w-60 rounded-2xl border border-line bg-moss p-2 shadow-xl shadow-plum/10">
                     {item.links.map((link) => (
                       <li key={link.href}>
                         <Link href={link.href} className="block rounded-xl px-4 py-2.5 text-ink hover:bg-blush hover:text-accent">
